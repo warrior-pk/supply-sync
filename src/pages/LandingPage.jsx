@@ -36,7 +36,7 @@ const features = [
 
 const LandingPage = () => {
   return (
-    <div className="min-h-svh w-full bg-background">
+    <div className="min-h-svh w-full bg-background flex flex-col">
       {/* Header */}
       <header className="border-b">
         <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
