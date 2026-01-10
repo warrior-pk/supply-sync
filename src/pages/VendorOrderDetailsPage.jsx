@@ -6,7 +6,7 @@ import purchaseOrderItemService from "@/services/purchase-order-item.service";
 import orderActionService from "@/services/order-action.service";
 import plantService from "@/services/plant.service";
 import productService from "@/services/product.service";
-import { formatDate, getCurrentUTC } from "@/lib/date-time";
+import { getCurrentUTC } from "@/lib/date-time";
 import { 
   PURCHASE_ORDER_STATUS, 
   ORDER_ACTION_STATUS, 
@@ -14,12 +14,7 @@ import {
 } from "@/constants/entities";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Breadcrumb,
@@ -30,39 +25,20 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
   Alert,
   AlertDescription,
   AlertTitle,
 } from "@/components/ui/alert";
 import { HugeiconsIcon } from "@hugeicons/react";
 import {
-  Package01Icon,
   ArrowLeft02Icon,
-  Calendar03Icon,
-  TruckIcon,
-  Tick02Icon,
-  Cancel01Icon,
   Alert02Icon,
-  Edit02Icon,
-  MoneyReceive02Icon,
-  Clock01Icon,
 } from "@hugeicons/core-free-icons";
 import { toast } from "sonner";
+
+import OrderDetailsCard from "@/components/vendor/orders/OrderDetailsCard";
+import UpdateOrderCard from "@/components/vendor/orders/UpdateOrderCard";
+import PendingActionsCard from "@/components/vendor/orders/PendingActionsCard";
 
 const STATUS_COLORS = {
   [PURCHASE_ORDER_STATUS.PENDING]: "bg-yellow-100 text-yellow-800",
@@ -70,30 +46,6 @@ const STATUS_COLORS = {
   [PURCHASE_ORDER_STATUS.SHIPPED]: "bg-purple-100 text-purple-800",
   [PURCHASE_ORDER_STATUS.DELIVERED]: "bg-green-100 text-green-800",
   [PURCHASE_ORDER_STATUS.CANCELLED]: "bg-red-100 text-red-800",
-};
-
-const ACTION_TYPE_CONFIG = {
-  [ORDER_ACTION_TYPE.UPDATE]: {
-    label: "Update Request",
-    icon: Edit02Icon,
-    color: "text-blue-600",
-  },
-  [ORDER_ACTION_TYPE.CANCEL]: {
-    label: "Cancel Request",
-    icon: Cancel01Icon,
-    color: "text-red-600",
-  },
-  [ORDER_ACTION_TYPE.RETURN]: {
-    label: "Return Request",
-    icon: MoneyReceive02Icon,
-    color: "text-orange-600",
-  },
-};
-
-const ACTION_STATUS_COLORS = {
-  [ORDER_ACTION_STATUS.PENDING]: "bg-yellow-100 text-yellow-800",
-  [ORDER_ACTION_STATUS.APPROVED]: "bg-green-100 text-green-800",
-  [ORDER_ACTION_STATUS.REJECTED]: "bg-red-100 text-red-800",
 };
 
 // Allowed status transitions for vendor
@@ -301,8 +253,23 @@ const VendorOrderDetailsPage = () => {
     }
   };
 
-  const getStatusBadge = (status, colorMap = STATUS_COLORS) => {
-    const colorClass = colorMap[status] || "bg-gray-100 text-gray-800";
+  const handleResponseChange = (actionId, value) => {
+    setActionResponses((prev) => ({
+      ...prev,
+      [actionId]: value,
+    }));
+  };
+
+  const handleApprove = (action) => {
+    handleActionResponse(action, true);
+  };
+
+  const handleReject = (action) => {
+    handleActionResponse(action, false);
+  };
+
+  const getStatusBadge = (status) => {
+    const colorClass = STATUS_COLORS[status] || "bg-gray-100 text-gray-800";
     return <Badge className={colorClass}>{status}</Badge>;
   };
 
@@ -388,213 +355,35 @@ const VendorOrderDetailsPage = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Order Details Card */}
-        <Card className="lg:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <HugeiconsIcon icon={Package01Icon} size={20} />
-              Order Details
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            {/* Order Info */}
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <div>
-                <Label className="text-muted-foreground">Plant</Label>
-                <p className="font-medium">{plants[order.plantId]?.name || order.plantId}</p>
-              </div>
-              <div>
-                <Label className="text-muted-foreground">Order Date</Label>
-                <p className="font-medium">{formatDate(order.orderDate)}</p>
-              </div>
-              {order.actualDeliveryDate && (
-                <div>
-                  <Label className="text-muted-foreground">Actual Delivery</Label>
-                  <p className="font-medium text-green-600">{formatDate(order.actualDeliveryDate)}</p>
-                </div>
-              )}
-            </div>
-
-            <Separator />
-
-            {/* Order Items */}
-            <div>
-              <h4 className="font-medium mb-3">Order Items</h4>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Product</TableHead>
-                    <TableHead className="text-right">Quantity</TableHead>
-                    <TableHead>Unit</TableHead>
-                    {orderItems[0]?.unitPrice && <TableHead className="text-right">Unit Price</TableHead>}
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {orderItems.map((item) => (
-                    <TableRow key={item.id}>
-                      <TableCell className="font-medium">
-                        {products[item.productId]?.name || item.productId}
-                      </TableCell>
-                      <TableCell className="text-right">{item.quantity}</TableCell>
-                      <TableCell>{item.unit}</TableCell>
-                      {item.unitPrice && (
-                        <TableCell className="text-right">₹{item.unitPrice}</TableCell>
-                      )}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
+        <OrderDetailsCard 
+          order={order}
+          orderItems={orderItems}
+          plants={plants}
+          products={products}
+        />
 
         {/* Update Order Card */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <HugeiconsIcon icon={Edit02Icon} size={20} />
-              Update Order
-            </CardTitle>
-            <CardDescription>
-              Update delivery date and order status
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {/* Expected Delivery Date */}
-            <div className="space-y-2">
-              <Label htmlFor="deliveryDate">Expected Delivery Date</Label>
-              <Input
-                id="deliveryDate"
-                type="date"
-                value={expectedDeliveryDate}
-                onChange={(e) => setExpectedDeliveryDate(e.target.value)}
-                min={new Date().toISOString().split("T")[0]}
-                disabled={[PURCHASE_ORDER_STATUS.DELIVERED, PURCHASE_ORDER_STATUS.CANCELLED].includes(order.status)}
-              />
-            </div>
-
-            {/* Status */}
-            <div className="space-y-2">
-              <Label htmlFor="status">Order Status</Label>
-              <Select 
-                value={selectedStatus} 
-                onValueChange={setSelectedStatus}
-                disabled={[PURCHASE_ORDER_STATUS.DELIVERED, PURCHASE_ORDER_STATUS.CANCELLED].includes(order.status)}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  {getAvailableStatusOptions().map((status) => (
-                    <SelectItem key={status} value={status}>
-                      {status}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <p className="text-xs text-muted-foreground">
-                Status can only be moved forward in the workflow
-              </p>
-            </div>
-
-            <Button 
-              onClick={handleUpdateOrder} 
-              disabled={saving || [PURCHASE_ORDER_STATUS.DELIVERED, PURCHASE_ORDER_STATUS.CANCELLED].includes(order.status)}
-              className="w-full"
-            >
-              {saving ? "Saving..." : "Update Order"}
-            </Button>
-
-            {[PURCHASE_ORDER_STATUS.DELIVERED, PURCHASE_ORDER_STATUS.CANCELLED].includes(order.status) && (
-              <p className="text-sm text-muted-foreground text-center">
-                This order is {order.status.toLowerCase()} and cannot be modified.
-              </p>
-            )}
-          </CardContent>
-        </Card>
+        <UpdateOrderCard
+          order={order}
+          expectedDeliveryDate={expectedDeliveryDate}
+          selectedStatus={selectedStatus}
+          onDeliveryDateChange={setExpectedDeliveryDate}
+          onStatusChange={setSelectedStatus}
+          onUpdate={handleUpdateOrder}
+          saving={saving}
+          availableStatusOptions={getAvailableStatusOptions()}
+        />
       </div>
 
       {/* Pending Action Requests */}
-      {pendingActions.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <HugeiconsIcon icon={Clock01Icon} size={20} />
-              Pending Action Requests
-            </CardTitle>
-            <CardDescription>
-              Review and respond to action requests from the admin
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            {pendingActions.map((action) => {
-              const config = ACTION_TYPE_CONFIG[action.actionType];
-              return (
-                <div 
-                  key={action.id} 
-                  className="border rounded-lg p-4 space-y-4"
-                >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-center gap-2">
-                      <HugeiconsIcon icon={config?.icon || Alert02Icon} size={20} className={config?.color} />
-                      <div>
-                        <h4 className="font-medium">{config?.label || action.actionType}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          Requested on {formatDate(action.createdAt)}
-                        </p>
-                      </div>
-                    </div>
-                    {getStatusBadge(action.status, ACTION_STATUS_COLORS)}
-                  </div>
-
-                  {/* Admin Message */}
-                  <div className="bg-muted p-3 rounded-md">
-                    <Label className="text-xs text-muted-foreground">Admin Message:</Label>
-                    <p className="text-sm mt-1">{action.message}</p>
-                  </div>
-
-                  {/* Response */}
-                  <div className="space-y-2">
-                    <Label htmlFor={`response-${action.id}`}>Your Response</Label>
-                    <Textarea
-                      id={`response-${action.id}`}
-                      value={actionResponses[action.id] || ""}
-                      onChange={(e) => 
-                        setActionResponses((prev) => ({
-                          ...prev,
-                          [action.id]: e.target.value,
-                        }))
-                      }
-                      placeholder="Enter your response (required for rejection)"
-                      rows={2}
-                    />
-                  </div>
-
-                  {/* Action Buttons */}
-                  <div className="flex gap-2 justify-end">
-                    <Button
-                      variant="outline"
-                      onClick={() => handleActionResponse(action, false)}
-                      disabled={processingAction === action.id}
-                      className="gap-2"
-                    >
-                      <HugeiconsIcon icon={Cancel01Icon} size={16} />
-                      Reject
-                    </Button>
-                    <Button
-                      onClick={() => handleActionResponse(action, true)}
-                      disabled={processingAction === action.id}
-                      className="gap-2"
-                    >
-                      <HugeiconsIcon icon={Tick02Icon} size={16} />
-                      Approve
-                    </Button>
-                  </div>
-                </div>
-              );
-            })}
-          </CardContent>
-        </Card>
-      )}
+      <PendingActionsCard
+        actions={pendingActions}
+        actionResponses={actionResponses}
+        onResponseChange={handleResponseChange}
+        onApprove={handleApprove}
+        onReject={handleReject}
+        processingAction={processingAction}
+      />
     </div>
   );
 };

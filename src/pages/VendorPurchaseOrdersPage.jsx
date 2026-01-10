@@ -6,12 +6,8 @@ import purchaseOrderItemService from "@/services/purchase-order-item.service";
 import orderActionService from "@/services/order-action.service";
 import plantService from "@/services/plant.service";
 import productService from "@/services/product.service";
-import { formatDate } from "@/lib/date-time";
-import { PURCHASE_ORDER_STATUS, ORDER_ACTION_STATUS } from "@/constants/entities";
+import { ORDER_ACTION_STATUS } from "@/constants/entities";
 
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Breadcrumb,
@@ -21,47 +17,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog";
-import { HugeiconsIcon } from "@hugeicons/react";
-import {
-  Package01Icon,
-  ViewIcon,
-  ArrowRight01Icon,
-  Alert02Icon,
-} from "@hugeicons/core-free-icons";
 import { toast } from "sonner";
 
-const ITEMS_PER_PAGE = 10;
+import OrdersTable from "@/components/vendor/orders/OrdersTable";
+import OrderQuickViewDialog from "@/components/vendor/orders/OrderQuickViewDialog";
 
-const STATUS_COLORS = {
-  [PURCHASE_ORDER_STATUS.PENDING]: "bg-yellow-100 text-yellow-800",
-  [PURCHASE_ORDER_STATUS.CONFIRMED]: "bg-blue-100 text-blue-800",
-  [PURCHASE_ORDER_STATUS.SHIPPED]: "bg-purple-100 text-purple-800",
-  [PURCHASE_ORDER_STATUS.DELIVERED]: "bg-green-100 text-green-800",
-  [PURCHASE_ORDER_STATUS.CANCELLED]: "bg-red-100 text-red-800",
-};
+const ITEMS_PER_PAGE = 10;
 
 const VendorPurchaseOrdersPage = () => {
   const navigate = useNavigate();
@@ -206,15 +167,6 @@ const VendorPurchaseOrdersPage = () => {
     }
   };
 
-  const handleOpenOrder = (orderId) => {
-    navigate(`/vendor/manage/orders/${orderId}`);
-  };
-
-  const getStatusBadge = (status) => {
-    const colorClass = STATUS_COLORS[status] || "bg-gray-100 text-gray-800";
-    return <Badge className={colorClass}>{status}</Badge>;
-  };
-
   if (loading && purchaseOrders.length === 0) {
     return (
       <div className="space-y-6">
@@ -251,217 +203,26 @@ const VendorPurchaseOrdersPage = () => {
       </div>
 
       {/* Purchase Orders Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <HugeiconsIcon icon={Package01Icon} size={20} />
-            My Orders
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {purchaseOrders.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-12 text-muted-foreground">
-              <HugeiconsIcon icon={Package01Icon} size={48} className="mb-4 opacity-50" />
-              <p className="text-lg">No purchase orders found</p>
-              <p className="text-sm">Orders assigned to you will appear here</p>
-            </div>
-          ) : (
-            <>
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Order ID</TableHead>
-                    <TableHead>Plant</TableHead>
-                    <TableHead>Order Date</TableHead>
-                    <TableHead>Expected Delivery</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {purchaseOrders.map((order) => {
-                    const hasPendingAction = pendingActions[order.id];
-                    return (
-                      <TableRow key={order.id} className="hover:bg-muted/50">
-                        <TableCell className="font-medium">
-                          <div className="flex items-center gap-2">
-                            #{order.id.slice(0, 6).toUpperCase()}
-                            {hasPendingAction && (
-                              <span 
-                                className="relative flex h-3 w-3"
-                                title="Pending action request"
-                              >
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
-                              </span>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>{plants[order.plantId]?.name || order.plantId}</TableCell>
-                        <TableCell>{formatDate(order.orderDate)}</TableCell>
-                        <TableCell>
-                          {order.actualDeliveryDate ? (
-                            <div className="space-y-1">
-                              <span className="text-green-600">{formatDate(order.actualDeliveryDate)}</span>
-                              <p className="text-xs text-muted-foreground">Delivered</p>
-                            </div>
-                          ) : (
-                            formatDate(order.expectedDeliveryDate)
-                          )}
-                        </TableCell>
-                        <TableCell>{getStatusBadge(order.status)}</TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleViewDetails(order)}
-                              title="Quick View"
-                            >
-                              <HugeiconsIcon icon={ViewIcon} size={16} />
-                            </Button>
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleOpenOrder(order.id)}
-                              className="gap-1"
-                            >
-                              {hasPendingAction && (
-                                <HugeiconsIcon icon={Alert02Icon} size={14} className="text-yellow-600" />
-                              )}
-                              Open
-                              <HugeiconsIcon icon={ArrowRight01Icon} size={14} />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-
-              {/* Pagination */}
-              {totalPages > 1 && (
-                <div className="mt-4 flex justify-center">
-                  <Pagination>
-                    <PaginationContent>
-                      <PaginationItem>
-                        <PaginationPrevious
-                          onClick={() => handlePageChange(currentPage - 1)}
-                          className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                        />
-                      </PaginationItem>
-                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                        <PaginationItem key={page}>
-                          <PaginationLink
-                            onClick={() => handlePageChange(page)}
-                            isActive={currentPage === page}
-                            className="cursor-pointer"
-                          >
-                            {page}
-                          </PaginationLink>
-                        </PaginationItem>
-                      ))}
-                      <PaginationItem>
-                        <PaginationNext
-                          onClick={() => handlePageChange(currentPage + 1)}
-                          className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                        />
-                      </PaginationItem>
-                    </PaginationContent>
-                  </Pagination>
-                </div>
-              )}
-            </>
-          )}
-        </CardContent>
-      </Card>
+      <OrdersTable
+        orders={purchaseOrders}
+        plants={plants}
+        pendingActions={pendingActions}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+        onViewDetails={handleViewDetails}
+      />
 
       {/* View Details Dialog */}
-      <Dialog open={viewDetailsOpen} onOpenChange={setViewDetailsOpen}>
-        <DialogContent className="max-w-2xl">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <HugeiconsIcon icon={Package01Icon} size={20} />
-              Order #{viewOrder?.id?.slice(0, 6).toUpperCase()}
-            </DialogTitle>
-            <DialogDescription>
-              Order details and items
-            </DialogDescription>
-          </DialogHeader>
-
-          {viewOrder && (
-            <div className="space-y-4">
-              {/* Order Info */}
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                <div>
-                  <span className="text-muted-foreground">Plant:</span>
-                  <p className="font-medium">{plants[viewOrder.plantId]?.name || viewOrder.plantId}</p>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Status:</span>
-                  <div className="mt-1">{getStatusBadge(viewOrder.status)}</div>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Order Date:</span>
-                  <p className="font-medium">{formatDate(viewOrder.orderDate)}</p>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Expected Delivery:</span>
-                  <p className="font-medium">{formatDate(viewOrder.expectedDeliveryDate)}</p>
-                </div>
-              </div>
-
-              {/* Order Items */}
-              <div>
-                <h4 className="font-medium mb-2">Order Items</h4>
-                {loadingItems ? (
-                  <div className="space-y-2">
-                    <Skeleton className="h-10" />
-                    <Skeleton className="h-10" />
-                  </div>
-                ) : orderItems.length === 0 ? (
-                  <p className="text-sm text-muted-foreground">No items found</p>
-                ) : (
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Product</TableHead>
-                        <TableHead className="text-right">Quantity</TableHead>
-                        <TableHead>Unit</TableHead>
-                        {orderItems[0]?.unitPrice && <TableHead className="text-right">Unit Price</TableHead>}
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {orderItems.map((item) => (
-                        <TableRow key={item.id}>
-                          <TableCell>{products[item.productId]?.name || item.productId}</TableCell>
-                          <TableCell className="text-right">{item.quantity}</TableCell>
-                          <TableCell>{item.unit}</TableCell>
-                          {item.unitPrice && (
-                            <TableCell className="text-right">₹{item.unitPrice}</TableCell>
-                          )}
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                )}
-              </div>
-
-              {/* Action Button */}
-              <div className="flex justify-end pt-4">
-                <Button onClick={() => {
-                  setViewDetailsOpen(false);
-                  handleOpenOrder(viewOrder.id);
-                }} className="gap-2">
-                  Open Full Details
-                  <HugeiconsIcon icon={ArrowRight01Icon} size={16} />
-                </Button>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <OrderQuickViewDialog
+        open={viewDetailsOpen}
+        onOpenChange={setViewDetailsOpen}
+        order={viewOrder}
+        orderItems={orderItems}
+        loadingItems={loadingItems}
+        plants={plants}
+        products={products}
+      />
     </div>
   );
 };
