@@ -11,6 +11,9 @@ import AdminDashboardPage from "./pages/AdminDashboardPage"
 import VendorListingPage from "./pages/VendorListingPage"
 import VendorDetailsPage from "./pages/VendorDetailsPage"
 import InventoryPage from "./pages/InventoryPage"
+import PurchaseOrderPage from "./pages/PurchaseOrderPage"
+import NotFoundPage from "./pages/NotFoundPage"
+import UnauthorizedPage from "./pages/UnauthorizedPage"
 import { Toaster } from "./components/ui/sonner"
 
 createRoot(document.getElementById("root")).render(
@@ -26,8 +29,8 @@ createRoot(document.getElementById("root")).render(
             <Route path="manage/vendors" element={<VendorListingPage />} />
             <Route path="manage/vendors/:vendorId" element={<VendorDetailsPage />} />
             <Route path="manage/inventory" element={<InventoryPage />} />
-            <Route path="purchase-orders" element={<div>All Purchase Orders Page</div>} />
-            <Route path="*" element={<div>Admin 404 Not Found</div>} />
+            <Route path="purchase-orders" element={<PurchaseOrderPage />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
 
           <Route path="/vendor" element={<VendorLayout />}>
@@ -35,14 +38,13 @@ createRoot(document.getElementById("root")).render(
             <Route path="purchase-orders" element={<div>Vendor Orders Page</div>} />
             <Route path="purchase-orders/:id" element={<div>Vendor Order Details Page</div>} />
             <Route path="profile" element={<div>Vendor Profile Page</div>} />
-            // Other invalid vendor routes
-            <Route path="*" element={<div>Vendor 404 Not Found</div>} />
+            {/* Other invalid vendor routes */}
+            <Route path="*" element={<NotFoundPage />} />
           </Route>
 
-          // Other invalid root routes
-          <Route path="/unauthorized" element={<div>Unauthorized Access</div>} />
-          <Route path="/not-found" element={<div>404 Not Found</div>} />
-          <Route path="*" element={<div>404 Not Found</div>} />
+          {/* Other root routes */}
+          <Route path="/unauthorized" element={<UnauthorizedPage />} />
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
     </BrowserRouter>

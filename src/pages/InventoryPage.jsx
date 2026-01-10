@@ -66,8 +66,22 @@ const InventoryPage = () => {
   const lowStockItems = inventory.filter((item) => item.quantityAvailable < item.reorderLevel);
 
   const handleRestock = (plantId, productId) => {
-    // Navigate to purchase order creation page (we'll create this later)
-    navigate(`/admin/manage/purchase-orders/create?plantId=${plantId}&productId=${productId}`);
+    // Find inventory item and product for restock data
+    const inventoryItem = inventory.find(item => item.plantId === plantId && item.productId === productId);
+    const product = products[productId];
+    
+    const restockData = {
+      plantId,
+      productId,
+      currentQuantity: inventoryItem?.quantityAvailable || 0,
+      reorderLevel: inventoryItem?.reorderLevel || 0,
+      suggestedQuantity: Math.max((inventoryItem?.reorderLevel || 100) - (inventoryItem?.quantityAvailable || 0), 100),
+      productName: product?.name || "",
+      unit: product?.unit || "KG",
+    };
+
+    // Navigate to purchase orders page with restock data
+    navigate("/admin/purchase-orders", { state: { restockData } });
   };
 
   if (loading) {

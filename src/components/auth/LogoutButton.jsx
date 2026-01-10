@@ -1,4 +1,4 @@
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/components/ui/button';
 import { useAuth } from "../../store/auth.store";
 import { toast } from 'sonner';
 import { HugeiconsIcon } from '@hugeicons/react';

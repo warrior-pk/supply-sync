@@ -32,7 +32,7 @@ const LoginCard = ({ className, ...props }) => {
 
   const onSubmit = async (data) => {
     const response = await authService.login(data.email, data.password);
-    console.log(data, response.data.user);
+    console.log(data, response.data?.user);
     if (response.success) {
       setAuth(true, "dummy-token", response.data.user);
       toast.success(response.message || "Login successful");

@@ -1,20 +1,38 @@
 import { mapMessage } from "@/constants/message-mapper";
 import apiService from "./api.service";
-import { PURCHASE_ORDERS_ENDPOINT } from "@/constants/api-endpoints";
+import { PURCHASE_ORDERS_ENDPOINT, PURCHASE_ORDER_ITEMS_ENDPOINT } from "@/constants/api-endpoints";
+import { getCurrentUTC } from "@/lib/date-time";
 
 const purchaseOrderService = {
   /**
-   * Get all purchase orders
-   * @returns {Promise<{success: boolean, data: purchaseOrder[], message: string}>}
+   * Get all purchase orders with optional pagination
+   * @param {object} params - Query parameters for pagination and filtering
+   * @param {number} params._page - Page number (1-based)
+   * @param {number} params._limit - Items per page
+   * @param {string} params._sort - Field to sort by
+   * @param {string} params._order - Sort order (asc/desc)
+   * @returns {Promise<{success: boolean, data: purchaseOrder[], total: number, message: string}>}
    */
-  getAll: async () => {
-    const response = await apiService.sendRequest(PURCHASE_ORDERS_ENDPOINT.GET);
+  getAll: async (params = {}) => {
+    const queryParams = new URLSearchParams();
+    
+    if (params._page) queryParams.append('_page', params._page);
+    if (params._limit) queryParams.append('_limit', params._limit);
+    if (params._sort) queryParams.append('_sort', params._sort);
+    if (params._order) queryParams.append('_order', params._order);
+
+    const endpoint = queryParams.toString() 
+      ? `${PURCHASE_ORDERS_ENDPOINT.GET}?${queryParams.toString()}`
+      : PURCHASE_ORDERS_ENDPOINT.GET;
+
+    const response = await apiService.sendRequest(endpoint);
     console.log("Purchase Order Service Get All Response:", response);
 
     if (response.success) {
       return {
         success: true,
         data: response.data,
+        total: parseInt(response.headers?.['x-total-count'] || response.data?.length || 0, 10),
         message: mapMessage("FETCH_SUCCESS"),
       };
     }
@@ -22,6 +40,7 @@ const purchaseOrderService = {
     return {
       success: false,
       data: null,
+      total: 0,
       message: mapMessage("SERVER_ERROR"),
     };
   },
@@ -99,13 +118,37 @@ const purchaseOrderService = {
   },
 
   /**
-   * Create purchase order
-   * @param {object} data
+   * Create purchase order with items
+   * @param {object} orderData - Purchase order data
+   * @param {array} items - Array of purchase order items
    * @returns {Promise<{success: boolean, data: purchaseOrder, message: string}>}
    */
-  create: async (data) => {
-    const response = await apiService.sendRequest(PURCHASE_ORDERS_ENDPOINT.CREATE, "POST", data);
+  create: async (orderData, items = []) => {
+    const purchaseOrderPayload = {
+      ...orderData,
+      orderDate: getCurrentUTC(),
+    };
+
+    const response = await apiService.sendRequest(PURCHASE_ORDERS_ENDPOINT.CREATE, "POST", purchaseOrderPayload);
     console.log("Purchase Order Service Create Response:", response);
+
+    if (response.success && items.length > 0) {
+      const purchaseOrderId = response.data.id;
+      
+      // Create all purchase order items
+      const itemPromises = items.map(item => 
+        apiService.sendRequest(PURCHASE_ORDER_ITEMS_ENDPOINT.CREATE, "POST", {
+          ...item,
+          purchaseOrderId,
+        })
+      );
+
+      try {
+        await Promise.all(itemPromises);
+      } catch (error) {
+        console.error("Error creating purchase order items:", error);
+      }
+    }
 
     if (response.success) {
       return {

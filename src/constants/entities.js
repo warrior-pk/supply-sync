@@ -9,3 +9,33 @@ export const VENDOR_STATUS = {
     SUSPENDED: 'SUSPENDED',
     PENDING: 'PENDING',
 };
+
+export const PURCHASE_ORDER_STATUS = {
+    PENDING: 'PENDING',
+    CONFIRMED: 'CONFIRMED',
+    SHIPPED: 'SHIPPED',
+    DELIVERED: 'DELIVERED',
+    CANCELLED: 'CANCELLED',
+};
+
+export const UNIT_OF_MEASUREMENT = {
+    KG: 'KG',
+    GRAM: 'GRAM',
+    TONNE: 'TONNE',
+    LITER: 'LITER',
+    PIECE: 'PIECE',
+    BOX: 'BOX',
+    METER: 'METER',
+};
+
+export const ORDER_ACTION_TYPE = {
+    UPDATE: 'UPDATE',
+    CANCEL: 'CANCEL',
+    RETURN: 'RETURN',
+};
+
+export const ORDER_ACTION_STATUS = {
+    PENDING: 'PENDING',
+    APPROVED: 'APPROVED',
+    REJECTED: 'REJECTED',
+};

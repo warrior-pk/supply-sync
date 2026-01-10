@@ -88,3 +88,14 @@ export const PERFORMANCE_METRICS_ENDPOINT = {
     UPDATE: (id) => `${API_BASE_URL}/performanceMetrics/${id}`,
     DELETE: (id) => `${API_BASE_URL}/performanceMetrics/${id}`,
 }
+
+export const ORDER_ACTIONS_ENDPOINT = {
+    GET: `${API_BASE_URL}/orderActions`,
+    GET_BY_ID: (id) => `${API_BASE_URL}/orderActions/${id}`,
+    GET_BY_PURCHASE_ORDER_ID: (purchaseOrderId) => `${API_BASE_URL}/orderActions?purchaseOrderId=${purchaseOrderId}`,
+    GET_BY_VENDOR_ID: (vendorId) => `${API_BASE_URL}/orderActions?vendorId=${vendorId}`,
+    GET_PENDING: `${API_BASE_URL}/orderActions?status=PENDING`,
+    CREATE: `${API_BASE_URL}/orderActions`,
+    UPDATE: (id) => `${API_BASE_URL}/orderActions/${id}`,
+    DELETE: (id) => `${API_BASE_URL}/orderActions/${id}`,
+}

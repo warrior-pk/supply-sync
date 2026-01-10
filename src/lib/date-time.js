@@ -1,9 +1,9 @@
 /*
 * @params utc: UTC time string
-* @params timeZone: Target time zone (default is "IST")
+* @params timeZone: Target time zone (default is "Asia/Kolkata" for IST)
 * @returns Local time string in the specified time zone
 */
-const convertToLocalTime = (utc, timeZone = "IST") => {
+const convertToLocalTime = (utc, timeZone = "Asia/Kolkata") => {
     try {
         const date = new Date(utc);
         const options = {
@@ -15,9 +15,28 @@ const convertToLocalTime = (utc, timeZone = "IST") => {
             minute: '2-digit',
             second: '2-digit',
         };
-        return new Intl.DateTimeFormat([], options).format(date);
+        return new Intl.DateTimeFormat('en-IN', options).format(date);
     } catch (error) {
         console.error("Error converting time:", error);
+        return null;
+    }
+}
+
+/*
+* @params utc: UTC time string
+* @returns Formatted date string (e.g., "10 Jan 2026")
+*/
+const formatDate = (utc) => {
+    try {
+        const date = new Date(utc);
+        return new Intl.DateTimeFormat('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric',
+            timeZone: 'Asia/Kolkata',
+        }).format(date);
+    } catch (error) {
+        console.error("Error formatting date:", error);
         return null;
     }
 }
@@ -49,4 +68,4 @@ const getCurrentUTC = () => {
     return now.toISOString().split('.')[0] + 'Z';
 }
 
-export { convertToLocalTime, convertToUTC, getCurrentUTC };
+export { convertToLocalTime, convertToUTC, getCurrentUTC, formatDate };

@@ -34,7 +34,7 @@
         "state": "Maharashtra",
         "zipCode": "400001",
         "country": "India"
-      },     
+      },
       "status": "APPROVED",
       "createdAt": "2026-01-01T09:00:00Z"
     },
@@ -86,6 +86,11 @@
       "id": "p7k2",
       "name": "Steel Rod Grade A",
       "unit": "KG",
+      "acceptedUnits": [
+        "KG",
+        "TONNE",
+        "GRAM"
+      ],
       "isActive": true,
       "createdAt": "2026-01-01T08:30:00Z"
     }
@@ -127,6 +132,14 @@
       "expectedDeliveryDate": "2026-01-06T00:00:00Z",
       "actualDeliveryDate": "2026-01-05T15:00:00Z",
       "status": "DELIVERED"
+    },
+    {
+      "id": "00cc",
+      "vendorId": "f2a4",
+      "plantId": "pl3m",
+      "expectedDeliveryDate": "2026-01-22T00:00:00.000Z",
+      "status": "PENDING",
+      "orderDate": "2026-01-10T12:35:04Z"
     }
   ],
   "purchaseOrderItems": [
@@ -135,7 +148,15 @@
       "purchaseOrderId": "po9q",
       "productId": "p7k2",
       "quantity": 200,
+      "unit": "KG",
       "unitPrice": 55
+    },
+    {
+      "id": "7a34",
+      "productId": "p7k2",
+      "quantity": 500,
+      "unit": "KG",
+      "purchaseOrderId": "00cc"
     }
   ],
   "performanceMetrics": [
@@ -145,6 +166,20 @@
       "onTimeDeliveryRate": 100,
       "qualityScore": 4.6,
       "evaluationDate": "2026-01-07T10:00:00Z"
+    }
+  ],
+  "orderActions": [
+    {
+      "id": "3f47",
+      "purchaseOrderId": "po9q",
+      "vendorId": "f2a4",
+      "actionType": "RETURN",
+      "message": "Hi this is not needed.",
+      "status": "PENDING",
+      "createdAt": "2026-01-10T12:48:24Z",
+      "resolvedAt": null,
+      "resolvedBy": null,
+      "vendorResponse": null
     }
   ]
 }
