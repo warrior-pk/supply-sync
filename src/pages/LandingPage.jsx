@@ -1,34 +1,109 @@
 import LoginCard from "@/components/auth/LoginCard";
+import BrandName from "@/components/common/BrandName";
+import ThemeSwitcher from "@/components/common/ThemeSwitcher";
+import { Badge } from "@/components/ui/badge";
+import { HugeiconsIcon } from "@hugeicons/react";
+import { 
+  Package01Icon, 
+  TruckIcon, 
+  AnalyticsUpIcon, 
+  ShieldBlockchainIcon 
+} from "@hugeicons/core-free-icons";
 import React from "react";
-import doodleUrl from "../assets/doodle.svg";
+
+const features = [
+  {
+    icon: Package01Icon,
+    title: "Inventory Management",
+    description: "Track stock levels in real-time across all your plants",
+  },
+  {
+    icon: TruckIcon,
+    title: "Vendor Coordination",
+    description: "Streamline purchase orders and vendor relationships",
+  },
+  {
+    icon: AnalyticsUpIcon,
+    title: "Performance Insights",
+    description: "Monitor delivery rates and quality metrics",
+  },
+  {
+    icon: ShieldBlockchainIcon,
+    title: "Document Verification",
+    description: "Manage vendor compliance and certifications",
+  },
+];
 
 const LandingPage = () => {
   return (
-    <div className="relative flex min-h-svh w-full items-center justify-center p-6 md:p-10 overflow-hidden bg-linear-to-br from-teal-50 via-sky-50 to-emerald-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
-      {/* Doodle background */}
-      <img
-        src={doodleUrl}
-        alt=""
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-20 dark:opacity-15"
-        style={{
-          maskImage:
-            "radial-gradient(circle at 50% 50%, black 30%, transparent 70%)",
-          WebkitMaskImage:
-            "radial-gradient(circle at 50% 50%, black 30%, transparent 70%)",
-        }}
-      />
-
-      {/* Ambient blobs */}
-      <div className="pointer-events-none absolute -top-24 -left-32 h-80 w-80 rounded-full bg-teal-300/25 blur-3xl dark:bg-teal-600/5" />
-      <div className="pointer-events-none absolute -bottom-28 -right-24 h-96 w-96 rounded-full bg-emerald-300/20 blur-3xl dark:bg-emerald-600/5" />
-
-      {/* Auth card wrapper */}
-      <div className="w-full max-w-md">
-        <div className="rounded-2xl border border-white/50 dark:border-white/10 bg-white/70 dark:bg-white/5 backdrop-blur-xl shadow-xl shadow-teal-900/5">
-          <LoginCard />
+    <div className="min-h-svh w-full bg-background">
+      {/* Header */}
+      <header className="border-b">
+        <div className="mx-auto max-w-7xl px-6 py-4 flex items-center justify-between">
+          <BrandName size="default" showIcon />
+          <ThemeSwitcher />
         </div>
-      </div>
+      </header>
+
+      {/* Main Content */}
+      <main className="mx-auto max-w-7xl px-6 py-12 lg:py-20">
+        <div className="grid gap-12 lg:grid-cols-2 lg:gap-16 items-center">
+          {/* Hero Section - Left */}
+          <div className="space-y-8">
+            <div className="space-y-4">
+              <Badge variant="secondary" className="mb-4">
+                Enterprise Supply Chain Platform
+              </Badge>
+              <h1 className="text-4xl font-bold tracking-tight lg:text-5xl">
+                Streamline Your
+                <span className="text-primary"> Supply Chain</span>
+              </h1>
+              <p className="text-lg text-muted-foreground max-w-md">
+                A comprehensive platform for managing vendors, inventory, and purchase orders. 
+                Built for efficiency and scalability.
+              </p>
+            </div>
+
+            {/* Features Grid */}
+            <div className="grid gap-4 sm:grid-cols-2">
+              {features.map((feature) => (
+                <div 
+                  key={feature.title}
+                  className="flex items-start gap-3 p-3 rounded-lg border bg-card/50"
+                >
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                    <HugeiconsIcon 
+                      icon={feature.icon} 
+                      size={20} 
+                      className="text-primary" 
+                    />
+                  </div>
+                  <div>
+                    <h3 className="font-medium">{feature.title}</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {feature.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Login Card - Right */}
+          <div className="lg:pl-8">
+            <div className="mx-auto max-w-sm lg:max-w-md">
+              <LoginCard />
+            </div>
+          </div>
+        </div>
+      </main>
+
+      {/* Footer */}
+      <footer className="border-t mt-auto">
+        <div className="mx-auto max-w-7xl px-6 py-6 text-center text-sm text-muted-foreground">
+          © 2026 SupplySync. All rights reserved.
+        </div>
+      </footer>
     </div>
   );
 };

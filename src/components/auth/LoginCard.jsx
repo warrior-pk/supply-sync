@@ -15,7 +15,6 @@ import { Input } from "@/components/ui/input";
 import { loginSchema } from "@/lib/schemas/login.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import BrandName from "../common/BrandName";
 import { useAuth } from "@/store/auth.store";
 import authService from "@/services/auth.service";
 import { toast } from "sonner";
@@ -44,12 +43,12 @@ const LoginCard = ({ className, ...props }) => {
 
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="bg-dark/2 backdrop-blur-md shadow-lg border border-dark/20">
-        <CardHeader className="">
-          <div className="text-center px-4 py-2">
-            <BrandName />
-            <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">
-              Sync your supply chain with clarity and speed
+      <Card className="border bg-card shadow-sm">
+        <CardHeader>
+          <div className="text-center space-y-2">
+            <h2 className="text-2xl font-semibold tracking-tight">Welcome back</h2>
+            <p className="text-sm text-muted-foreground">
+              Sign in to your account to continue
             </p>
           </div>
         </CardHeader>
