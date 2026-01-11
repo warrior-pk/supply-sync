@@ -19,6 +19,55 @@
       "password": "copper@123",
       "role": "VENDOR",
       "vendorId": "b4a8"
+    },
+    {
+      "id": "5ae7",
+      "email": "contact@metals.com",
+      "password": "contact@123",
+      "role": "VENDOR",
+      "vendorId": "06fa"
+    },
+    {
+      "email": "connect@apexsupply.com",
+      "password": "connect@123",
+      "role": "VENDOR",
+      "vendorId": "d0cd",
+      "id": "0e66"
+    },
+    {
+      "email": "delta.eng@works.com",
+      "password": "delta.eng@123",
+      "role": "VENDOR",
+      "vendorId": "036b",
+      "id": "0c96"
+    },
+    {
+      "email": "contact@orionmfg.com",
+      "password": "contact@123",
+      "role": "VENDOR",
+      "vendorId": "5b04",
+      "id": "0056"
+    },
+    {
+      "email": "Contact@sunrisecomp.com",
+      "password": "Contact@123",
+      "role": "VENDOR",
+      "vendorId": "c812",
+      "id": "cb84"
+    },
+    {
+      "email": "contact@greenleaf.com",
+      "password": "contact@123",
+      "role": "VENDOR",
+      "vendorId": "5b8e",
+      "id": "1737"
+    },
+    {
+      "email": "support@brightsuppliers.in",
+      "password": "support@123",
+      "role": "VENDOR",
+      "vendorId": "2734",
+      "id": "5b05"
     }
   ],
   "vendors": [
@@ -53,6 +102,118 @@
       },
       "status": "PENDING",
       "createdAt": "2026-01-09T10:55:22Z"
+    },
+    {
+      "id": "06fa",
+      "userId": "5ae7",
+      "name": "Shakti Metals",
+      "contactEmail": "contact@metals.com",
+      "contactPhone": "9876987609",
+      "address": {
+        "street": "1-1/90",
+        "city": "Vizianagaram",
+        "state": "Andhara Pradesh",
+        "zipCode": "535273",
+        "country": "India"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-01-11T17:07:02Z"
+    },
+    {
+      "id": "d0cd",
+      "userId": "0e66",
+      "name": "Apex Supply Chain",
+      "contactEmail": "connect@apexsupply.com",
+      "contactPhone": "9871234567",
+      "address": {
+        "street": "Ring Road",
+        "city": "Delhi",
+        "state": "Delhi",
+        "zipCode": "110037",
+        "country": "India"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-01-11T17:20:45Z"
+    },
+    {
+      "id": "036b",
+      "userId": "0c96",
+      "name": "Delta Engineering Works",
+      "contactEmail": "delta.eng@works.com",
+      "contactPhone": "9554433221",
+      "address": {
+        "street": "89 Heavy Industry Zone",
+        "city": "Coimbatore",
+        "state": "Tamil Nadu",
+        "zipCode": "641014",
+        "country": "India"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-01-11T17:22:11Z"
+    },
+    {
+      "id": "5b04",
+      "userId": "0056",
+      "name": "Orion Manufacturing",
+      "contactEmail": "contact@orionmfg.com",
+      "contactPhone": "9765432109",
+      "address": {
+        "street": "Unit 9,Sector 5",
+        "city": "Noida",
+        "state": "Uttar Pradesh",
+        "zipCode": "201301",
+        "country": "India"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-01-11T17:24:08Z"
+    },
+    {
+      "id": "c812",
+      "userId": "cb84",
+      "name": "Sunrise Components",
+      "contactEmail": "Contact@sunrisecomp.com",
+      "contactPhone": "9345678123",
+      "address": {
+        "street": "Industrial Block C",
+        "city": "Ahmedabad",
+        "state": "Gujarat",
+        "zipCode": "380015",
+        "country": "India"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-01-11T17:26:10Z"
+    },
+    {
+      "id": "5b8e",
+      "userId": "1737",
+      "name": "GreenLeaf Traders",
+      "contactEmail": "contact@greenleaf.com",
+      "contactPhone": "8899776655",
+      "address": {
+        "street": "34 Green Avenue",
+        "city": "Kochi",
+        "state": "Kerala",
+        "zipCode": "682030",
+        "country": "India"
+      },
+      "status": "APPROVED",
+      "createdAt": "2026-01-11T17:29:22Z"
+    },
+    {
+      "id": "2734",
+      "userId": "5b05",
+      "name": "Bright Suppliers",
+      "contactEmail": "support@brightsuppliers.in",
+      "contactPhone": "9988776655",
+      "address": {
+        "street": "78 Market Road",
+        "city": "Chennai",
+        "state": "Tamil Nadu",
+        "zipCode": "600018",
+        "country": "India"
+      },
+      "status": "PENDING",
+      "createdAt": "2026-01-11T17:31:26Z"
     }
   ],
   "vendorDocuments": [
@@ -79,6 +240,18 @@
       "verified": true,
       "uploadedAt": "2026-01-01T10:05:00Z",
       "verifiedAt": "2026-01-02T11:00:00Z"
+    },
+    {
+      "id": "0df3",
+      "vendorId": "5b8e",
+      "documentName": "gst",
+      "documentType": "GST_CERTIFICATE",
+      "url": "https://morth.nic.in/sites/default/files/dd12-13_0.pdf",
+      "fileName": "Employment Verification Clear Sample Report.pdf",
+      "fileType": "application/pdf",
+      "verified": false,
+      "uploadedAt": "2026-01-11T17:43:50Z",
+      "verifiedAt": null
     }
   ],
   "products": [

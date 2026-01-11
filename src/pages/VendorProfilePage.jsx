@@ -46,6 +46,8 @@ const VendorProfilePage = () => {
   useEffect(() => {
     if (user?.vendorId) {
       fetchVendorData();
+    } else {
+      setLoading(false);
     }
   }, [user?.vendorId]);
 
@@ -190,6 +192,46 @@ const VendorProfilePage = () => {
         <Skeleton className="h-12 w-48" />
         <Skeleton className="h-96" />
         <Skeleton className="h-64" />
+      </div>
+    );
+  }
+
+  // Handle case where vendor account is not properly linked
+  if (!user?.vendorId || !vendor) {
+    return (
+      <div className="space-y-6">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink onClick={() => navigate("/vendor")} className="cursor-pointer">
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Profile</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Profile</h1>
+          <p className="text-muted-foreground mt-2">
+            Manage your vendor profile and compliance documents.
+          </p>
+        </div>
+        
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 text-center">
+          <h2 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
+            Account Setup Incomplete
+          </h2>
+          <p className="text-yellow-700 dark:text-yellow-300 mb-4">
+            Your vendor profile is being set up. Please contact the administrator if this issue persists.
+          </p>
+          <p className="text-sm text-yellow-600 dark:text-yellow-400">
+            You may need to log out and log back in after your account is fully configured.
+          </p>
+        </div>
       </div>
     );
   }

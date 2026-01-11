@@ -83,10 +83,12 @@ const VendorOrderDetailsPage = () => {
   }, []);
 
   useEffect(() => {
-    if (id) {
+    if (id && user?.vendorId) {
       fetchOrderDetails();
+    } else if (!user?.vendorId) {
+      setLoading(false);
     }
-  }, [id]);
+  }, [id, user?.vendorId]);
 
   const fetchMasterData = async () => {
     try {
@@ -286,6 +288,45 @@ const VendorOrderDetailsPage = () => {
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-64" />
         <Skeleton className="h-48" />
+      </div>
+    );
+  }
+
+  // Handle case where vendor account is not properly linked
+  if (!user?.vendorId) {
+    return (
+      <div className="space-y-6">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink onClick={() => navigate("/vendor")} className="cursor-pointer">
+                Dashboard
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink onClick={() => navigate("/vendor/manage/orders")} className="cursor-pointer">
+                Purchase Orders
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>Order Details</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+        
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 text-center">
+          <h2 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
+            Account Setup Incomplete
+          </h2>
+          <p className="text-yellow-700 dark:text-yellow-300 mb-4">
+            Your vendor profile is being set up. Please contact the administrator if this issue persists.
+          </p>
+          <p className="text-sm text-yellow-600 dark:text-yellow-400">
+            You may need to log out and log back in after your account is fully configured.
+          </p>
+        </div>
       </div>
     );
   }

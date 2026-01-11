@@ -112,6 +112,19 @@ const CreateVendorDialog = ({ open, onOpenChange, onVendorCreated }) => {
         return;
       }
 
+      const vendorId = vendorResponse.data.id;
+
+      // Step 3: Update user with vendorId
+      const userUpdateResponse = await userService.update(userId, {
+        ...userPayload,
+        vendorId,
+      });
+
+      if (!userUpdateResponse.success) {
+        console.warn("Failed to link vendorId to user:", userUpdateResponse.message);
+        // Don't fail the entire operation, vendor is created
+      }
+
       toast.success("Vendor created successfully with PENDING status");
       reset();
       setCredentials(null);

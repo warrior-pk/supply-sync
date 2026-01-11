@@ -54,6 +54,9 @@ const VendorDashboardPage = () => {
   useEffect(() => {
     if (user?.vendorId) {
       fetchDashboardData();
+    } else {
+      // If no vendorId, try to fetch vendor by user's email or stop loading
+      setLoading(false);
     }
   }, [user?.vendorId]);
 
@@ -150,6 +153,37 @@ const VendorDashboardPage = () => {
           ))}
         </div>
         <Skeleton className="h-64" />
+      </div>
+    );
+  }
+
+  // Handle case where vendor account is not properly linked
+  if (!user?.vendorId || !vendor) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+            <p className="text-muted-foreground mt-2">
+              Welcome back!
+            </p>
+          </div>
+        </div>
+        
+        <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 text-center">
+          <h2 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
+            Account Setup Incomplete
+          </h2>
+          <p className="text-yellow-700 dark:text-yellow-300 mb-4">
+            Your vendor profile is being set up. Please contact the administrator if this issue persists.
+          </p>
+          <p className="text-sm text-yellow-600 dark:text-yellow-400">
+            You may need to log out and log back in after your account is fully configured.
+          </p>
+        </div>
+
+        {/* Quick Actions - still show even without full setup */}
+        <QuickActionsCard />
       </div>
     );
   }
