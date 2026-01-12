@@ -8,14 +8,15 @@ import VendorLayout from "./components/layouts/VendorLayout"
 import RootLayout from "./components/layouts/RootLayout"
 import LandingPage from "./pages/LandingPage"
 import AdminDashboardPage from "./pages/AdminDashboardPage"
-import VendorListingPage from "./pages/VendorListingPage"
-import VendorDetailsPage from "./pages/VendorDetailsPage"
-import InventoryPage from "./pages/InventoryPage"
-import PurchaseOrderPage from "./pages/PurchaseOrderPage"
+import AdminVendorListingPage from "./pages/AdminVendorListingPage"
+import AdminVendorDetailsPage from "./pages/AdminVendorDetailsPage"
+import AdminInventoryPage from "./pages/AdminInventoryPage"
+import AdminPurchaseOrdersPage from "./pages/AdminPurchaseOrdersPage"
 import VendorDashboardPage from "./pages/VendorDashboardPage"
 import VendorPurchaseOrdersPage from "./pages/VendorPurchaseOrdersPage"
 import VendorOrderDetailsPage from "./pages/VendorOrderDetailsPage"
 import VendorProfilePage from "./pages/VendorProfilePage"
+import VendorProductsPage from "./pages/VendorProductsPage"
 import NotFoundPage from "./pages/NotFoundPage"
 import UnauthorizedPage from "./pages/UnauthorizedPage"
 import { Toaster } from "./components/ui/sonner"
@@ -30,10 +31,10 @@ createRoot(document.getElementById("root")).render(
 
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={ <AdminDashboardPage /> } />
-            <Route path="manage/vendors" element={<VendorListingPage />} />
-            <Route path="manage/vendors/:vendorId" element={<VendorDetailsPage />} />
-            <Route path="manage/inventory" element={<InventoryPage />} />
-            <Route path="manage/purchase-orders" element={<PurchaseOrderPage />} />
+            <Route path="manage/vendors" element={<AdminVendorListingPage />} />
+            <Route path="manage/vendors/:vendorId" element={<AdminVendorDetailsPage />} />
+            <Route path="manage/inventory" element={<AdminInventoryPage />} />
+            <Route path="manage/purchase-orders" element={<AdminPurchaseOrdersPage />} />
             <Route path="*" element={<NotFoundPage />} />
           </Route>
 
@@ -42,6 +43,7 @@ createRoot(document.getElementById("root")).render(
             <Route path="manage/orders" element={<VendorPurchaseOrdersPage />} />
             <Route path="manage/orders/:id" element={<VendorOrderDetailsPage />} />
             <Route path="manage/profile" element={<VendorProfilePage />} />
+            <Route path="manage/products" element={<VendorProductsPage />} />
             {/* Other invalid vendor routes */}
             <Route path="*" element={<NotFoundPage />} />
           </Route>

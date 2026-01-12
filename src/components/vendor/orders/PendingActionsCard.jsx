@@ -93,6 +93,43 @@ const PendingActionsCard = ({
                 <p className="text-sm mt-1">{action.message}</p>
               </div>
 
+              {/* Proposed Changes for UPDATE actions */}
+              {action.actionType === ORDER_ACTION_TYPE.UPDATE && action.proposedChanges && (
+                <div className="bg-blue-50 dark:bg-blue-950 p-3 rounded-md space-y-3">
+                  <Label className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                    Proposed Changes:
+                  </Label>
+                  
+                  {action.proposedChanges.expectedDeliveryDate && (
+                    <div className="text-sm">
+                      <span className="text-muted-foreground">New Delivery Date: </span>
+                      <span className="font-medium">
+                        {formatDate(action.proposedChanges.expectedDeliveryDate)}
+                      </span>
+                    </div>
+                  )}
+                  
+                  {action.proposedChanges.itemChanges?.length > 0 && (
+                    <div className="space-y-2">
+                      <span className="text-sm text-muted-foreground">Quantity Changes:</span>
+                      <div className="space-y-1">
+                        {action.proposedChanges.itemChanges
+                          .filter(item => item.newQuantity !== item.originalQuantity)
+                          .map((item, index) => (
+                            <div key={index} className="text-sm flex items-center gap-2">
+                              <span className="font-medium">{item.productName}:</span>
+                              <span className="text-red-500 line-through">{item.originalQuantity}</span>
+                              <span>→</span>
+                              <span className="text-green-600 font-medium">{item.newQuantity}</span>
+                              <span className="text-muted-foreground">{item.unit}</span>
+                            </div>
+                          ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
               {/* Response */}
               <div className="space-y-2">
                 <Label htmlFor={`response-${action.id}`}>Your Response</Label>

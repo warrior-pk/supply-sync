@@ -92,14 +92,25 @@ const VendorListingPage = () => {
           <HugeiconsIcon icon={PreferenceHorizontalIcon} size={20} />
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-40">
-              <SelectValue />
+              <SelectValue>
+                {(value) => {
+                  const labels = {
+                    "ALL": "All Status",
+                    [VENDOR_STATUS.APPROVED]: "Approved",
+                    [VENDOR_STATUS.PENDING]: "Pending",
+                    [VENDOR_STATUS.SUSPENDED]: "Suspended",
+                    [VENDOR_STATUS.INACTIVE]: "Inactive",
+                  };
+                  return labels[value] || value;
+                }}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">All Status</SelectItem>
-              <SelectItem value={VENDOR_STATUS.APPROVED}>Approved</SelectItem>
-              <SelectItem value={VENDOR_STATUS.PENDING}>Pending</SelectItem>
-              <SelectItem value={VENDOR_STATUS.SUSPENDED}>Suspended</SelectItem>
-              <SelectItem value={VENDOR_STATUS.INACTIVE}>Inactive</SelectItem>
+              <SelectItem value="ALL" label="All Status">All Status</SelectItem>
+              <SelectItem value={VENDOR_STATUS.APPROVED} label="Approved">Approved</SelectItem>
+              <SelectItem value={VENDOR_STATUS.PENDING} label="Pending">Pending</SelectItem>
+              <SelectItem value={VENDOR_STATUS.SUSPENDED} label="Suspended">Suspended</SelectItem>
+              <SelectItem value={VENDOR_STATUS.INACTIVE} label="Inactive">Inactive</SelectItem>
             </SelectContent>
           </Select>
         </div>

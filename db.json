@@ -266,6 +266,50 @@
       ],
       "isActive": true,
       "createdAt": "2026-01-01T08:30:00Z"
+    },
+    {
+      "id": "p8b3",
+      "name": "Copper Wire 2.5mm",
+      "unit": "METER",
+      "acceptedUnits": [
+        "METER",
+        "KM"
+      ],
+      "isActive": true,
+      "createdAt": "2026-01-02T09:00:00Z"
+    },
+    {
+      "id": "p9c4",
+      "name": "Aluminum Sheet 3mm",
+      "unit": "PIECE",
+      "acceptedUnits": [
+        "PIECE",
+        "KG"
+      ],
+      "isActive": true,
+      "createdAt": "2026-01-02T09:30:00Z"
+    },
+    {
+      "id": "p10d5",
+      "name": "Brass Fitting Set",
+      "unit": "SET",
+      "acceptedUnits": [
+        "SET",
+        "PIECE"
+      ],
+      "isActive": true,
+      "createdAt": "2026-01-03T10:00:00Z"
+    },
+    {
+      "id": "p11e6",
+      "name": "Industrial Rubber Gasket",
+      "unit": "PIECE",
+      "acceptedUnits": [
+        "PIECE",
+        "BOX"
+      ],
+      "isActive": true,
+      "createdAt": "2026-01-04T11:00:00Z"
     }
   ],
   "vendorProducts": [
@@ -276,14 +320,54 @@
       "unitPrice": 55,
       "leadTimeDays": 5,
       "createdAt": "2026-01-01T09:30:00Z"
+    },
+    {
+      "id": "vp9y",
+      "vendorId": "b4a8",
+      "productId": "p8b3",
+      "unitPrice": 12.5,
+      "leadTimeDays": 3,
+      "createdAt": "2026-01-02T10:00:00Z"
+    },
+    {
+      "id": "vp10z",
+      "vendorId": "5b8e",
+      "productId": "p9c4",
+      "unitPrice": 850,
+      "leadTimeDays": 7,
+      "createdAt": "2026-01-03T11:00:00Z"
     }
   ],
   "plants": [
     {
       "id": "pl3m",
       "name": "Pune Plant",
-      "location": "Pune",
+      "location": "Pune, Maharashtra",
       "createdAt": "2026-01-01T08:00:00Z"
+    },
+    {
+      "id": "pl4n",
+      "name": "Chennai Factory",
+      "location": "Chennai, Tamil Nadu",
+      "createdAt": "2026-01-02T08:00:00Z"
+    },
+    {
+      "id": "pl5o",
+      "name": "Delhi NCR Hub",
+      "location": "Noida, Uttar Pradesh",
+      "createdAt": "2026-01-03T08:00:00Z"
+    },
+    {
+      "id": "pl6p",
+      "name": "Mumbai Central Warehouse",
+      "location": "Mumbai, Maharashtra",
+      "createdAt": "2026-01-04T08:00:00Z"
+    },
+    {
+      "id": "pl7q",
+      "name": "Bangalore Tech Park",
+      "location": "Bangalore, Karnataka",
+      "createdAt": "2026-01-05T08:00:00Z"
     }
   ],
   "inventory": [
@@ -291,9 +375,49 @@
       "id": "inv1",
       "productId": "p7k2",
       "plantId": "pl3m",
-      "quantityAvailable": 450,
+      "quantityAvailable": 500,
       "reorderLevel": 500,
-      "lastUpdated": "2026-01-04T12:00:00Z"
+      "lastUpdated": "2026-01-12T16:37:10Z"
+    },
+    {
+      "id": "inv2",
+      "productId": "p8b3",
+      "plantId": "pl4n",
+      "quantityAvailable": 2500,
+      "reorderLevel": 1000,
+      "lastUpdated": "2026-01-05T12:00:00Z"
+    },
+    {
+      "id": "inv3",
+      "productId": "p9c4",
+      "plantId": "pl5o",
+      "quantityAvailable": 75,
+      "reorderLevel": 100,
+      "lastUpdated": "2026-01-06T12:00:00Z"
+    },
+    {
+      "id": "inv4",
+      "productId": "p7k2",
+      "plantId": "pl6p",
+      "quantityAvailable": 800,
+      "reorderLevel": 600,
+      "lastUpdated": "2026-01-07T12:00:00Z"
+    },
+    {
+      "id": "inv5",
+      "productId": "p10d5",
+      "plantId": "pl7q",
+      "quantityAvailable": 30,
+      "reorderLevel": 50,
+      "lastUpdated": "2026-01-08T12:00:00Z"
+    },
+    {
+      "id": "66d2",
+      "productId": "p7k2",
+      "plantId": "pl5o",
+      "quantityAvailable": 25,
+      "reorderLevel": 5,
+      "lastUpdated": "2026-01-12T16:33:40Z"
     }
   ],
   "purchaseOrders": [
@@ -311,8 +435,43 @@
       "vendorId": "f2a4",
       "plantId": "pl3m",
       "expectedDeliveryDate": "2026-01-22T00:00:00.000Z",
-      "status": "PENDING",
+      "status": "CANCELLED",
       "orderDate": "2026-01-10T12:35:04Z"
+    },
+    {
+      "id": "59ab",
+      "vendorId": "f2a4",
+      "plantId": "pl4n",
+      "expectedDeliveryDate": "2026-01-22T00:00:00.000Z",
+      "status": "PENDING",
+      "orderDate": "2026-01-12T16:27:28Z"
+    },
+    {
+      "id": "ffbf",
+      "vendorId": "f2a4",
+      "plantId": "pl3m",
+      "expectedDeliveryDate": "2026-01-19T00:00:00.000Z",
+      "status": "DELIVERED",
+      "orderDate": "2026-01-12T16:27:55Z",
+      "actualDeliveryDate": "2026-01-12T16:28:23Z"
+    },
+    {
+      "id": "95d6",
+      "vendorId": "f2a4",
+      "plantId": "pl5o",
+      "expectedDeliveryDate": "2026-01-19T00:00:00.000Z",
+      "status": "DELIVERED",
+      "orderDate": "2026-01-12T16:32:58Z",
+      "actualDeliveryDate": "2026-01-12T16:33:40Z"
+    },
+    {
+      "id": "aed3",
+      "vendorId": "f2a4",
+      "plantId": "pl3m",
+      "expectedDeliveryDate": "2026-01-19T00:00:00.000Z",
+      "status": "DELIVERED",
+      "orderDate": "2026-01-12T16:36:24Z",
+      "actualDeliveryDate": "2026-01-12T16:37:10Z"
     }
   ],
   "purchaseOrderItems": [
@@ -327,9 +486,37 @@
     {
       "id": "7a34",
       "productId": "p7k2",
-      "quantity": 500,
+      "quantity": 5000,
       "unit": "KG",
       "purchaseOrderId": "00cc"
+    },
+    {
+      "id": "70fc",
+      "productId": "p7k2",
+      "quantity": 1,
+      "unit": "TONNE",
+      "purchaseOrderId": "59ab"
+    },
+    {
+      "id": "783b",
+      "productId": "p7k2",
+      "quantity": 100,
+      "unit": "KG",
+      "purchaseOrderId": "ffbf"
+    },
+    {
+      "id": "5e66",
+      "productId": "p7k2",
+      "quantity": 25,
+      "unit": "KG",
+      "purchaseOrderId": "95d6"
+    },
+    {
+      "id": "3e24",
+      "productId": "p7k2",
+      "quantity": 200,
+      "unit": "KG",
+      "purchaseOrderId": "aed3"
     }
   ],
   "performanceMetrics": [
@@ -348,11 +535,72 @@
       "vendorId": "f2a4",
       "actionType": "RETURN",
       "message": "Hi this is not needed.",
-      "status": "PENDING",
+      "status": "APPROVED",
       "createdAt": "2026-01-10T12:48:24Z",
-      "resolvedAt": null,
-      "resolvedBy": null,
-      "vendorResponse": null
+      "resolvedAt": "2026-01-12T16:07:46Z",
+      "resolvedBy": "f2a4",
+      "vendorResponse": "Approved"
+    },
+    {
+      "id": "d6ee",
+      "purchaseOrderId": "00cc",
+      "vendorId": "f2a4",
+      "actionType": "UPDATE",
+      "message": "Need more",
+      "proposedChanges": {
+        "expectedDeliveryDate": "2026-01-22",
+        "itemChanges": [
+          {
+            "id": "7a34",
+            "productId": "p7k2",
+            "originalQuantity": 500,
+            "newQuantity": 5000,
+            "unit": "KG"
+          }
+        ]
+      },
+      "status": "APPROVED",
+      "createdAt": "2026-01-12T18:21:32Z",
+      "resolvedAt": "2026-01-12T18:21:56Z",
+      "resolvedBy": "f2a4",
+      "vendorResponse": "Approved"
+    },
+    {
+      "id": "0c2f",
+      "purchaseOrderId": "00cc",
+      "vendorId": "f2a4",
+      "actionType": "UPDATE",
+      "message": "Need less",
+      "proposedChanges": {
+        "expectedDeliveryDate": "2026-01-22",
+        "itemChanges": [
+          {
+            "id": "7a34",
+            "productId": "p7k2",
+            "productName": "Steel Rod Grade A",
+            "originalQuantity": 5000,
+            "newQuantity": 300,
+            "unit": "KG"
+          }
+        ]
+      },
+      "status": "REJECTED",
+      "createdAt": "2026-01-12T18:32:15Z",
+      "resolvedAt": "2026-01-12T18:32:43Z",
+      "resolvedBy": "f2a4",
+      "vendorResponse": "cannot do"
+    },
+    {
+      "id": "5901",
+      "purchaseOrderId": "00cc",
+      "vendorId": "f2a4",
+      "actionType": "CANCEL",
+      "message": "Don't need",
+      "status": "APPROVED",
+      "createdAt": "2026-01-12T18:33:11Z",
+      "resolvedAt": "2026-01-12T18:33:22Z",
+      "resolvedBy": "f2a4",
+      "vendorResponse": "Okay"
     }
   ]
 }

@@ -96,11 +96,13 @@ const UploadDocumentDialog = ({ open, onOpenChange, onUpload, uploading }) => {
             <Label htmlFor="docType">Document Type *</Label>
             <Select value={documentType} onValueChange={setDocumentType}>
               <SelectTrigger>
-                <SelectValue placeholder="Select document type" />
+                <SelectValue placeholder="Select document type">
+                  {(value) => DOCUMENT_TYPE_LABELS[value] || value}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {Object.entries(DOCUMENT_TYPE_LABELS).map(([key, label]) => (
-                  <SelectItem key={key} value={key}>
+                  <SelectItem key={key} value={key} label={label}>
                     {label}
                   </SelectItem>
                 ))}
@@ -111,7 +113,10 @@ const UploadDocumentDialog = ({ open, onOpenChange, onUpload, uploading }) => {
           {/* File Upload */}
           <div className="space-y-2">
             <Label htmlFor="file">Select File *</Label>
-            <div className="border-2 border-dashed rounded-lg p-6 text-center">
+            <div 
+              className="border-2 border-dashed rounded-lg p-6 text-center relative cursor-pointer hover:border-primary/50 transition-colors"
+              onClick={() => fileInputRef.current?.click()}
+            >
               {selectedFile ? (
                 <div className="flex items-center justify-center gap-2">
                   <HugeiconsIcon icon={File02Icon} size={24} className="text-primary" />
@@ -119,7 +124,8 @@ const UploadDocumentDialog = ({ open, onOpenChange, onUpload, uploading }) => {
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.stopPropagation();
                       setSelectedFile(null);
                       if (fileInputRef.current) {
                         fileInputRef.current.value = "";
@@ -144,8 +150,7 @@ const UploadDocumentDialog = ({ open, onOpenChange, onUpload, uploading }) => {
                 type="file"
                 accept=".pdf,application/pdf"
                 onChange={handleFileSelect}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                style={{ position: "relative" }}
+                className="sr-only"
               />
             </div>
           </div>

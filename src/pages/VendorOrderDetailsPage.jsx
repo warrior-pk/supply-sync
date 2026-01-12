@@ -4,6 +4,7 @@ import useAuthStore from "@/store/auth.store";
 import purchaseOrderService from "@/services/purchase-order.service";
 import purchaseOrderItemService from "@/services/purchase-order-item.service";
 import orderActionService from "@/services/order-action.service";
+import inventoryService from "@/services/inventory.service";
 import plantService from "@/services/plant.service";
 import productService from "@/services/product.service";
 import { getCurrentUTC } from "@/lib/date-time";
@@ -188,6 +189,12 @@ const VendorOrderDetailsPage = () => {
       const response = await purchaseOrderService.update(id, updateData);
       
       if (response.success) {
+        // Update inventory if order is marked as DELIVERED
+        if (selectedStatus === PURCHASE_ORDER_STATUS.DELIVERED && order.status !== PURCHASE_ORDER_STATUS.DELIVERED) {
+          await updateInventoryOnDelivery(order.plantId, orderItems);
+          toast.success("Inventory updated for delivered items");
+        }
+        
         setOrder(response.data);
         toast.success("Order updated successfully");
       } else {
@@ -198,6 +205,43 @@ const VendorOrderDetailsPage = () => {
       toast.error("An error occurred while updating order");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const updateInventoryOnDelivery = async (plantId, items) => {
+    try {
+      for (const item of items) {
+        // Get current inventory for this product at this plant
+        const inventoryRes = await inventoryService.getAll();
+        
+        if (inventoryRes.success) {
+          const existingInventory = inventoryRes.data.find(
+            inv => inv.productId === item.productId && inv.plantId === plantId
+          );
+          
+          if (existingInventory) {
+            // Update existing inventory
+            await inventoryService.update(existingInventory.id, {
+              ...existingInventory,
+              quantityAvailable: existingInventory.quantityAvailable + item.quantity,
+              lastUpdated: getCurrentUTC(),
+            });
+          } else {
+            // Create new inventory record
+            await inventoryService.create({
+              productId: item.productId,
+              plantId: plantId,
+              quantityAvailable: item.quantity,
+              reorderLevel: Math.round(item.quantity * 0.2), // Default 20% as reorder level
+              lastUpdated: getCurrentUTC(),
+            });
+          }
+        }
+      }
+      console.log("Inventory updated successfully for delivered order");
+    } catch (error) {
+      console.error("Error updating inventory:", error);
+      // Don't fail the order update, just log the error
     }
   };
 
@@ -223,14 +267,31 @@ const VendorOrderDetailsPage = () => {
       const response = await orderActionService.update(action.id, updateData);
       
       if (response.success) {
-        // If action was approved and it's a CANCEL request, update order status
-        if (approved && action.actionType === ORDER_ACTION_TYPE.CANCEL) {
-          await purchaseOrderService.update(order.id, {
-            ...order,
-            status: PURCHASE_ORDER_STATUS.CANCELLED,
-          });
-          setOrder({ ...order, status: PURCHASE_ORDER_STATUS.CANCELLED });
-          setSelectedStatus(PURCHASE_ORDER_STATUS.CANCELLED);
+        // Handle approved actions based on type
+        if (approved) {
+          if (action.actionType === ORDER_ACTION_TYPE.CANCEL) {
+            // Cancel the order
+            await purchaseOrderService.update(order.id, {
+              ...order,
+              status: PURCHASE_ORDER_STATUS.CANCELLED,
+            });
+            setOrder({ ...order, status: PURCHASE_ORDER_STATUS.CANCELLED });
+            setSelectedStatus(PURCHASE_ORDER_STATUS.CANCELLED);
+            toast.success("Order has been cancelled");
+          } else if (action.actionType === ORDER_ACTION_TYPE.UPDATE) {
+            // Apply proposed changes to the order
+            await applyOrderUpdate(action);
+            toast.success("Order has been updated with the proposed changes");
+          } else if (action.actionType === ORDER_ACTION_TYPE.RETURN) {
+            // For RETURN requests, acknowledge the return
+            await purchaseOrderService.update(order.id, {
+              ...order,
+              returnRequested: true,
+              returnRequestedAt: getCurrentUTC(),
+            });
+            setOrder({ ...order, returnRequested: true });
+            toast.success("Return request approved");
+          }
         }
 
         // Remove from pending actions
@@ -243,7 +304,9 @@ const VendorOrderDetailsPage = () => {
           return updated;
         });
 
-        toast.success(`Action ${approved ? "approved" : "rejected"} successfully`);
+        if (!approved) {
+          toast.success("Action rejected successfully");
+        }
       } else {
         toast.error(response.message || "Failed to process action");
       }
@@ -252,6 +315,42 @@ const VendorOrderDetailsPage = () => {
       toast.error("An error occurred while processing action");
     } finally {
       setProcessingAction(null);
+    }
+  };
+
+  const applyOrderUpdate = async (action) => {
+    const proposedChanges = action.proposedChanges;
+    if (!proposedChanges) return;
+
+    // Update order with new delivery date
+    const orderUpdate = { ...order };
+    if (proposedChanges.expectedDeliveryDate) {
+      orderUpdate.expectedDeliveryDate = new Date(proposedChanges.expectedDeliveryDate).toISOString();
+    }
+    
+    await purchaseOrderService.update(order.id, orderUpdate);
+    setOrder(orderUpdate);
+    setExpectedDeliveryDate(proposedChanges.expectedDeliveryDate || expectedDeliveryDate);
+
+    // Update order items with new quantities
+    if (proposedChanges.itemChanges && proposedChanges.itemChanges.length > 0) {
+      for (const itemChange of proposedChanges.itemChanges) {
+        if (itemChange.newQuantity !== itemChange.originalQuantity) {
+          // Find the current item to preserve all fields
+          const currentItem = orderItems.find(item => item.id === itemChange.id);
+          if (currentItem) {
+            await purchaseOrderItemService.update(itemChange.id, {
+              ...currentItem,
+              quantity: itemChange.newQuantity,
+            });
+          }
+        }
+      }
+      // Refresh order items
+      const itemsRes = await purchaseOrderItemService.getByPurchaseOrderId(order.id);
+      if (itemsRes.success) {
+        setOrderItems(itemsRes.data || []);
+      }
     }
   };
 

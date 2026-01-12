@@ -60,11 +60,13 @@ const UpdateOrderCard = ({
             disabled={isDisabled}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select status" />
+              <SelectValue placeholder="Select status">
+                {(value) => value}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               {availableStatusOptions.map((status) => (
-                <SelectItem key={status} value={status}>
+                <SelectItem key={status} value={status} label={status}>
                   {status}
                 </SelectItem>
               ))}

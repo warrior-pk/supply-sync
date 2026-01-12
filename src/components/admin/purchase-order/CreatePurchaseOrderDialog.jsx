@@ -219,11 +219,13 @@ const CreatePurchaseOrderDialog = ({
                   render={({ field }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger className={`w-full ${errors.vendorId ? "border-destructive" : ""}`}>
-                        <SelectValue placeholder="Select vendor" />
+                        <SelectValue placeholder="Select vendor">
+                          {(value) => approvedVendors.find(v => v.id === value)?.name || value}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {approvedVendors.map((vendor) => (
-                          <SelectItem key={vendor.id} value={vendor.id}>
+                          <SelectItem key={vendor.id} value={vendor.id} label={vendor.name}>
                             {vendor.name}
                           </SelectItem>
                         ))}
@@ -244,11 +246,16 @@ const CreatePurchaseOrderDialog = ({
                   render={({ field }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger className={`w-full ${errors.plantId ? "border-destructive" : ""}`}>
-                        <SelectValue placeholder="Select plant" />
+                        <SelectValue placeholder="Select plant">
+                          {(value) => {
+                            const plant = plants.find(p => p.id === value);
+                            return plant ? `${plant.name} - ${plant.location}` : value;
+                          }}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         {plants.map((plant) => (
-                          <SelectItem key={plant.id} value={plant.id}>
+                          <SelectItem key={plant.id} value={plant.id} label={`${plant.name} - ${plant.location}`}>
                             {plant.name} - {plant.location}
                           </SelectItem>
                         ))}
@@ -331,7 +338,9 @@ const CreatePurchaseOrderDialog = ({
               </div>
             ) : (
               <div className="space-y-3">
-                {fields.map((field, index) => (
+                {fields.map((field, index) => {
+                  const watchedProductId = watch(`orderItems.${index}.productId`);
+                  return (
                   <Card key={field.id} className="relative">
                     <Button
                       type="button"
@@ -355,11 +364,13 @@ const CreatePurchaseOrderDialog = ({
                               onValueChange={(value) => handleProductChange(index, value)}
                             >
                               <SelectTrigger className={`w-full ${errors.orderItems?.[index]?.productId ? "border-destructive" : ""}`}>
-                                <SelectValue placeholder="Select product" />
+                                <SelectValue placeholder="Select product">
+                                  {(value) => products.find(p => p.id === value)?.name || value}
+                                </SelectValue>
                               </SelectTrigger>
                               <SelectContent>
                                 {getAvailableProducts().map((product) => (
-                                  <SelectItem key={product.id} value={product.id}>
+                                  <SelectItem key={product.id} value={product.id} label={product.name}>
                                     {product.name}
                                   </SelectItem>
                                 ))}
@@ -405,11 +416,13 @@ const CreatePurchaseOrderDialog = ({
                                 onValueChange={unitField.onChange}
                               >
                                 <SelectTrigger className={`w-full ${errors.orderItems?.[index]?.unit ? "border-destructive" : ""}`}>
-                                  <SelectValue />
+                                  <SelectValue>
+                                    {(value) => value}
+                                  </SelectValue>
                                 </SelectTrigger>
                                 <SelectContent>
-                                  {getProductAcceptedUnits(field.productId).map((unit) => (
-                                    <SelectItem key={unit} value={unit}>
+                                  {getProductAcceptedUnits(watchedProductId).map((unit) => (
+                                    <SelectItem key={unit} value={unit} label={unit}>
                                       {unit}
                                     </SelectItem>
                                   ))}
@@ -424,7 +437,8 @@ const CreatePurchaseOrderDialog = ({
                       </div>
                     </CardContent>
                   </Card>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

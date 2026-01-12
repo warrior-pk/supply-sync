@@ -352,18 +352,29 @@ const VendorDetailsPage = () => {
             <CardContent className="space-y-4">
               <Select value={selectedStatus} onValueChange={handleStatusChange} disabled={updatingStatus}>
                 <SelectTrigger>
-                  <SelectValue />
+                  <SelectValue>
+                    {(value) => {
+                      const labels = {
+                        [VENDOR_STATUS.PENDING]: "Pending",
+                        [VENDOR_STATUS.APPROVED]: "Approved",
+                        [VENDOR_STATUS.SUSPENDED]: "Suspended",
+                        [VENDOR_STATUS.INACTIVE]: "Inactive",
+                      };
+                      return labels[value] || value;
+                    }}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value={VENDOR_STATUS.PENDING}>Pending</SelectItem>
+                  <SelectItem value={VENDOR_STATUS.PENDING} label="Pending">Pending</SelectItem>
                   <SelectItem
                     value={VENDOR_STATUS.APPROVED}
+                    label="Approved"
                     disabled={!canApproveVendor()}
                   >
                     Approved
                   </SelectItem>
-                  <SelectItem value={VENDOR_STATUS.SUSPENDED}>Suspended</SelectItem>
-                  <SelectItem value={VENDOR_STATUS.INACTIVE}>Inactive</SelectItem>
+                  <SelectItem value={VENDOR_STATUS.SUSPENDED} label="Suspended">Suspended</SelectItem>
+                  <SelectItem value={VENDOR_STATUS.INACTIVE} label="Inactive">Inactive</SelectItem>
                 </SelectContent>
               </Select>
 

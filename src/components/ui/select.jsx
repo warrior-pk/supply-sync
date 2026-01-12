@@ -21,13 +21,18 @@ function SelectGroup({
 
 function SelectValue({
   className,
+  children,
+  placeholder,
   ...props
 }) {
   return (
     <SelectPrimitive.Value
       data-slot="select-value"
       className={cn("flex flex-1 text-left", className)}
-      {...props} />
+      placeholder={placeholder}
+      {...props}>
+      {children}
+    </SelectPrimitive.Value>
   );
 }
 
@@ -108,11 +113,13 @@ function SelectLabel({
 function SelectItem({
   className,
   children,
+  label,
   ...props
 }) {
   return (
     <SelectPrimitive.Item
       data-slot="select-item"
+      label={label || (typeof children === 'string' ? children : undefined)}
       className={cn(
         "focus:bg-accent focus:text-accent-foreground not-data-[variant=destructive]:focus:**:text-accent-foreground gap-2 rounded-sm py-1.5 pr-8 pl-2 text-sm [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2 relative flex w-full cursor-default items-center outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
         className

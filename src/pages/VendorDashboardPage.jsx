@@ -204,6 +204,21 @@ const VendorDashboardPage = () => {
         </div>
       </div>
 
+      {/* Status Reason Alert (for suspended/inactive vendors) */}
+      {vendor?.statusReason && (vendor?.status === VENDOR_STATUS.SUSPENDED || vendor?.status === VENDOR_STATUS.INACTIVE) && (
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+          <h3 className="font-semibold text-red-800 dark:text-red-200 mb-1">
+            {vendor?.status === VENDOR_STATUS.SUSPENDED ? "Account Suspended" : "Account Inactive"}
+          </h3>
+          <p className="text-sm text-red-700 dark:text-red-300">
+            <span className="font-medium">Reason:</span> {vendor.statusReason}
+          </p>
+          <p className="text-xs text-red-600 dark:text-red-400 mt-2">
+            Please contact the administrator for more information.
+          </p>
+        </div>
+      )}
+
       {/* Pending Actions Alert */}
       <PendingActionsAlert count={stats.pendingActions} />
 
