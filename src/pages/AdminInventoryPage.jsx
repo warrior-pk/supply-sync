@@ -63,25 +63,66 @@ const InventoryPage = () => {
   };
 
   // Get all low stock items (quantity < reorder level)
-  const lowStockItems = inventory.filter((item) => item.quantityAvailable < item.reorderLevel);
+  const lowStockItems = inventory.filter(
+    (item) => item.quantityAvailable < item.reorderLevel
+  );
 
   const handleRestock = (plantId, productId) => {
     // Find inventory item and product for restock data
-    const inventoryItem = inventory.find(item => item.plantId === plantId && item.productId === productId);
+    const inventoryItem = inventory.find(
+      (item) => item.plantId === plantId && item.productId === productId
+    );
     const product = products[productId];
-    
+
     const restockData = {
       plantId,
       productId,
       currentQuantity: inventoryItem?.quantityAvailable || 0,
       reorderLevel: inventoryItem?.reorderLevel || 0,
-      suggestedQuantity: Math.max((inventoryItem?.reorderLevel || 100) - (inventoryItem?.quantityAvailable || 0), 100),
+      suggestedQuantity: Math.max(
+        (inventoryItem?.reorderLevel || 100) -
+          (inventoryItem?.quantityAvailable || 0),
+        100
+      ),
       productName: product?.name || "",
       unit: product?.unit || "KG",
     };
 
     // Navigate to purchase orders page with restock data
     navigate("/admin/manage/purchase-orders", { state: { restockData } });
+  };
+
+  const handleConsume = async (plantId, productId, quantity) => {
+    try {
+      const inventoryItem = inventory.find(
+        (item) => item.plantId === plantId && item.productId === productId
+      );
+      if (!inventoryItem) {
+        toast.error("Inventory item not found");
+        return;
+      }
+
+      const response = await inventoryService.consume(
+        inventoryItem.id,
+        inventoryItem,
+        quantity
+      );
+
+      if (response.success) {
+        // Update local state with the response data
+        setInventory((prevInventory) =>
+          prevInventory.map((item) =>
+            item.id === inventoryItem.id ? response.data : item
+          )
+        );
+        toast.success(`Successfully consumed ${quantity} units`);
+      } else {
+        toast.error(response.message || "Failed to consume inventory");
+      }
+    } catch (error) {
+      console.error("Error consuming inventory:", error);
+      toast.error("An error occurred while consuming inventory");
+    }
   };
 
   if (loading) {
@@ -101,7 +142,10 @@ const InventoryPage = () => {
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            <BreadcrumbLink onClick={() => navigate("/admin")} className="cursor-pointer">
+            <BreadcrumbLink
+              onClick={() => navigate("/admin")}
+              className="cursor-pointer"
+            >
               Dashboard
             </BreadcrumbLink>
           </BreadcrumbItem>
@@ -114,8 +158,12 @@ const InventoryPage = () => {
 
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold tracking-tight">Inventory Management</h1>
-        <p className="text-muted-foreground mt-2">Manage stock levels and reorder products</p>
+        <h1 className="text-3xl font-bold tracking-tight">
+          Inventory Management
+        </h1>
+        <p className="text-muted-foreground mt-2">
+          Manage stock levels and reorder products
+        </p>
       </div>
 
       {/* Stock Alerts Card */}
@@ -132,6 +180,7 @@ const InventoryPage = () => {
         inventory={inventory}
         products={products}
         onRestock={handleRestock}
+        onConsume={handleConsume}
       />
     </div>
   );

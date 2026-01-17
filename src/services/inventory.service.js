@@ -1,6 +1,7 @@
 import { mapMessage } from "@/constants/message-mapper";
 import apiService from "./api.service";
 import { INVENTORY_ENDPOINT } from "@/constants/api-endpoints";
+import { getCurrentUTC } from "@/lib/date-time";
 
 const inventoryService = {
   /**
@@ -165,6 +166,42 @@ const inventoryService = {
 
     return {
       success: false,
+      message: mapMessage("SERVER_ERROR"),
+    };
+  },
+
+  /**
+   * Consume inventory (reduce quantity)
+   * @param {string} id - Inventory item ID
+   * @param {object} currentItem - Current inventory item data
+   * @param {number} quantity - Quantity to consume
+   * @returns {Promise<{success: boolean, data: inventory, message: string}>}
+   */
+  consume: async (id, currentItem, quantity) => {
+    const updatedData = {
+      ...currentItem,
+      quantityAvailable: currentItem.quantityAvailable - quantity,
+      lastUpdated: getCurrentUTC(),
+    };
+    
+    const response = await apiService.sendRequest(
+      INVENTORY_ENDPOINT.UPDATE(id),
+      "PUT",
+      updatedData
+    );
+    console.log("Inventory Service Consume Response:", response);
+
+    if (response.success) {
+      return {
+        success: true,
+        data: response.data,
+        message: mapMessage("UPDATE_SUCCESS"),
+      };
+    }
+
+    return {
+      success: false,
+      data: null,
       message: mapMessage("SERVER_ERROR"),
     };
   },

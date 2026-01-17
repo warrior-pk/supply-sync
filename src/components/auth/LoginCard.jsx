@@ -77,7 +77,7 @@ const LoginCard = ({ className, ...props }) => {
                 name="password"
                 render={({ field, fieldState }) => (
                   <Field>
-                    <div className="flex items-center">
+                    {/* <div className="flex items-center">
                       <FieldLabel htmlFor={field.name}>Password</FieldLabel>
                       <a
                         href="#"
@@ -85,7 +85,7 @@ const LoginCard = ({ className, ...props }) => {
                       >
                         Forgot your password?
                       </a>
-                    </div>
+                    </div> */}
                     <Input {...field} id={field.name} type="password" placeholder="*******" />
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />

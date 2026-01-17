@@ -19,15 +19,15 @@ import {
 } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const VendorPerformanceChart = () => {
+const VendorQualityChart = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchPerformanceData();
+    fetchQualityData();
   }, []);
 
-  const fetchPerformanceData = async () => {
+  const fetchQualityData = async () => {
     try {
       setLoading(true);
       const [metricsRes, vendorsRes] = await Promise.all([
@@ -43,14 +43,14 @@ const VendorPerformanceChart = () => {
 
         const chartData = (metricsRes.data || []).map((metric) => ({
           name: vendorMap[metric.vendorId] || `Vendor ${metric.vendorId}`,
-          performance: metric.onTimeDeliveryRate || 0,
+          quality: metric.qualityScore || 0,
         }));
 
-        chartData.sort((a, b) => b.performance - a.performance);
+        chartData.sort((a, b) => b.quality - a.quality);
         setData(chartData);
       }
     } catch (error) {
-      console.error("Error fetching performance data:", error);
+      console.error("Error fetching quality data:", error);
     } finally {
       setLoading(false);
     }
@@ -59,9 +59,9 @@ const VendorPerformanceChart = () => {
   return (
     <Card className="border-0 shadow-lg">
       <CardHeader>
-        <CardTitle>On-Time Delivery Performance</CardTitle>
+        <CardTitle>Vendor Quality Scores</CardTitle>
         <CardDescription>
-          Percentage of orders delivered on time by vendor
+          Quality rating by vendor (0-5 star scale)
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -86,9 +86,9 @@ const VendorPerformanceChart = () => {
                   tick={{ fontSize: 12 }}
                 />
                 <YAxis
-                  domain={[0, 100]}
+                  domain={[0, 5]}
                   label={{
-                    value: "Performance (%)",
+                    value: "Quality Score",
                     angle: -90,
                     position: "insideLeft",
                     offset: 10,
@@ -100,20 +100,16 @@ const VendorPerformanceChart = () => {
                     border: "1px solid hsl(var(--border))",
                     borderRadius: "6px",
                   }}
-                  formatter={(value) => `${value}%`}
+                  formatter={(value) => `${value.toFixed(1)} stars`}
                   labelStyle={{ color: "hsl(var(--foreground))" }}
                 />
-                <Bar
-                  dataKey="performance"
-                  fill="#10b981"
-                  radius={[8, 8, 0, 0]}
-                />
+                <Bar dataKey="quality" fill="#3b82f6" radius={[8, 8, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
         ) : (
           <div className="h-96 flex items-center justify-center text-muted-foreground">
-            No performance data available
+            No quality data available
           </div>
         )}
       </CardContent>
@@ -121,4 +117,4 @@ const VendorPerformanceChart = () => {
   );
 };
 
-export default VendorPerformanceChart;
+export default VendorQualityChart;

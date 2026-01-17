@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { createVendorSchema } from "@/lib/schemas/createVendor.schema";
+import performanceMetricsService from "@/services/performance-metrics.service";
 import { generateCredentials, copyToClipboard } from "@/lib/utils";
 import userService from "@/services/user.service";
 import vendorService from "@/services/vendor.service";
@@ -122,6 +123,22 @@ const CreateVendorDialog = ({ open, onOpenChange, onVendorCreated }) => {
 
       if (!userUpdateResponse.success) {
         console.warn("Failed to link vendorId to user:", userUpdateResponse.message);
+        // Don't fail the entire operation, vendor is created
+      }
+
+      // Step 4: Create default performance metrics for the vendor
+      const metricsPayload = {
+        vendorId,
+        onTimeDeliveryRate: 0,
+        qualityScore: 0,
+        evaluationDate: new Date().toISOString(),
+        overallRating: 0,
+        lastUpdated: new Date().toISOString(),
+      };
+
+      const metricsResponse = await performanceMetricsService.create(metricsPayload);
+      if (!metricsResponse.success) {
+        console.warn("Failed to create performance metrics:", metricsResponse.message);
         // Don't fail the entire operation, vendor is created
       }
 

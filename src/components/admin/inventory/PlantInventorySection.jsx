@@ -11,8 +11,15 @@ import PlantInventoryCard from "./PlantInventoryCard";
  * @param {Object[]} props.inventory - Array of all inventory items
  * @param {Object} props.products - Map of product data
  * @param {Function} props.onRestock - Callback when restock button is clicked
+ * @param {Function} props.onConsume - Callback when consume button is clicked
  */
-const PlantInventorySection = ({ plants, inventory, products, onRestock }) => {
+const PlantInventorySection = ({
+  plants,
+  inventory,
+  products,
+  onRestock,
+  onConsume,
+}) => {
   const getInventoryByPlant = (plantId) => {
     return inventory.filter((item) => item.plantId === plantId);
   };
@@ -35,6 +42,7 @@ const PlantInventorySection = ({ plants, inventory, products, onRestock }) => {
                 inventory={plantInventory}
                 products={products}
                 onRestock={onRestock}
+                onConsume={onConsume}
               />
             );
           })}
@@ -42,8 +50,14 @@ const PlantInventorySection = ({ plants, inventory, products, onRestock }) => {
       ) : (
         <Card>
           <CardContent className="text-center py-8">
-            <HugeiconsIcon icon={WarehouseIcon} size={32} className="text-muted-foreground/30 mx-auto mb-2" />
-            <p className="text-sm text-muted-foreground">No plants configured</p>
+            <HugeiconsIcon
+              icon={WarehouseIcon}
+              size={32}
+              className="text-muted-foreground/30 mx-auto mb-2"
+            />
+            <p className="text-sm text-muted-foreground">
+              No plants configured
+            </p>
           </CardContent>
         </Card>
       )}

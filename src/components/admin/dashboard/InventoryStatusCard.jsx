@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import inventoryService from "@/services/inventory.service";
+import productService from "@/services/product.service";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   LineChart,
@@ -25,10 +26,19 @@ const InventoryStatusCard = () => {
   const fetchInventoryData = async () => {
     try {
       setLoading(true);
-      const response = await inventoryService.getAll();
-      if (response.success && Array.isArray(response.data)) {
-        const chartData = response.data.map((item, index) => ({
-          product: `Product ${index + 1}`,
+      const inventoryResponse = await inventoryService.getAll();
+      const productsResponse = await productService.getAll();
+
+      if (inventoryResponse.success && Array.isArray(inventoryResponse.data)) {
+        const productsMap = {};
+        if (productsResponse.success && Array.isArray(productsResponse.data)) {
+          productsResponse.data.forEach((product) => {
+            productsMap[product.id] = product.name;
+          });
+        }
+
+        const chartData = inventoryResponse.data.map((item) => ({
+          product: productsMap[item.productId] || `Product ${item.id}`,
           available: item.quantityAvailable,
           reorderLevel: item.reorderLevel,
           status: item.quantityAvailable < item.reorderLevel ? "Low Stock" : "In Stock",

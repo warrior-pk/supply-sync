@@ -7,11 +7,12 @@ import orderActionService from "@/services/order-action.service";
 import inventoryService from "@/services/inventory.service";
 import plantService from "@/services/plant.service";
 import productService from "@/services/product.service";
+import performanceMetricsService from "@/services/performance-metrics.service";
 import { getCurrentUTC } from "@/lib/date-time";
-import { 
-  PURCHASE_ORDER_STATUS, 
-  ORDER_ACTION_STATUS, 
-  ORDER_ACTION_TYPE 
+import {
+  PURCHASE_ORDER_STATUS,
+  ORDER_ACTION_STATUS,
+  ORDER_ACTION_TYPE
 } from "@/constants/entities";
 
 import { Button } from "@/components/ui/button";
@@ -62,7 +63,7 @@ const VendorOrderDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuthStore();
-  
+
   const [order, setOrder] = useState(null);
   const [orderItems, setOrderItems] = useState([]);
   const [pendingActions, setPendingActions] = useState([]);
@@ -70,11 +71,11 @@ const VendorOrderDetailsPage = () => {
   const [products, setProducts] = useState({});
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  
+
   // Edit state
   const [expectedDeliveryDate, setExpectedDeliveryDate] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
-  
+
   // Action response state
   const [actionResponses, setActionResponses] = useState({});
   const [processingAction, setProcessingAction] = useState(null);
@@ -121,7 +122,7 @@ const VendorOrderDetailsPage = () => {
   const fetchOrderDetails = async () => {
     try {
       setLoading(true);
-      
+
       const [orderRes, itemsRes, actionsRes] = await Promise.all([
         purchaseOrderService.getById(id),
         purchaseOrderItemService.getByPurchaseOrderId(id),
@@ -130,17 +131,17 @@ const VendorOrderDetailsPage = () => {
 
       if (orderRes.success && orderRes.data) {
         const orderData = Array.isArray(orderRes.data) ? orderRes.data[0] : orderRes.data;
-        
+
         // Verify this order belongs to the vendor
         if (orderData.vendorId !== user.vendorId) {
           toast.error("You don't have access to this order");
           navigate("/vendor/manage/orders");
           return;
         }
-        
+
         setOrder(orderData);
         setSelectedStatus(orderData.status);
-        
+
         // Format date for input
         if (orderData.expectedDeliveryDate) {
           const date = new Date(orderData.expectedDeliveryDate);
@@ -174,7 +175,7 @@ const VendorOrderDetailsPage = () => {
   const handleUpdateOrder = async () => {
     try {
       setSaving(true);
-      
+
       const updateData = {
         ...order,
         expectedDeliveryDate: new Date(expectedDeliveryDate).toISOString(),
@@ -187,14 +188,15 @@ const VendorOrderDetailsPage = () => {
       }
 
       const response = await purchaseOrderService.update(id, updateData);
-      
+
       if (response.success) {
         // Update inventory if order is marked as DELIVERED
         if (selectedStatus === PURCHASE_ORDER_STATUS.DELIVERED && order.status !== PURCHASE_ORDER_STATUS.DELIVERED) {
           await updateInventoryOnDelivery(order.plantId, orderItems);
+          await updateVendorRatingOnDelivery(order.vendorId);
           toast.success("Inventory updated for delivered items");
         }
-        
+
         setOrder(response.data);
         toast.success("Order updated successfully");
       } else {
@@ -213,12 +215,12 @@ const VendorOrderDetailsPage = () => {
       for (const item of items) {
         // Get current inventory for this product at this plant
         const inventoryRes = await inventoryService.getAll();
-        
+
         if (inventoryRes.success) {
           const existingInventory = inventoryRes.data.find(
             inv => inv.productId === item.productId && inv.plantId === plantId
           );
-          
+
           if (existingInventory) {
             // Update existing inventory
             await inventoryService.update(existingInventory.id, {
@@ -245,9 +247,35 @@ const VendorOrderDetailsPage = () => {
     }
   };
 
+  const updateVendorRatingOnDelivery = async (vendorId) => {
+    try {
+      // Get vendor's performance metrics
+      const metricsRes = await performanceMetricsService.getByVendorId(vendorId);
+
+      if (metricsRes.success && metricsRes.data && metricsRes.data.length > 0) {
+        const currentMetrics = metricsRes.data[0];
+
+        // Increment on-time delivery count and increase rating
+        const updatedMetrics = {
+          ...currentMetrics,
+          onTimeDeliveryRate: (currentMetrics.onTimeDeliveryRate || 0) + 1,
+          overallRating: Math.min(5, (currentMetrics.overallRating || 3) + 0.1), // Cap at 5
+          lastUpdated: getCurrentUTC(),
+        };
+
+        // Update in database
+        await performanceMetricsService.update(currentMetrics.id, updatedMetrics);
+        console.log("Vendor rating updated successfully");
+      }
+    } catch (error) {
+      console.error("Error updating vendor rating:", error);
+      // Don't fail the order update, just log the error
+    }
+  };
+
   const handleActionResponse = async (action, approved) => {
     const vendorResponse = actionResponses[action.id] || "";
-    
+
     if (!vendorResponse.trim() && !approved) {
       toast.error("Please provide a reason for rejection");
       return;
@@ -255,7 +283,7 @@ const VendorOrderDetailsPage = () => {
 
     try {
       setProcessingAction(action.id);
-      
+
       const updateData = {
         ...action,
         status: approved ? ORDER_ACTION_STATUS.APPROVED : ORDER_ACTION_STATUS.REJECTED,
@@ -265,7 +293,7 @@ const VendorOrderDetailsPage = () => {
       };
 
       const response = await orderActionService.update(action.id, updateData);
-      
+
       if (response.success) {
         // Handle approved actions based on type
         if (approved) {
@@ -296,7 +324,7 @@ const VendorOrderDetailsPage = () => {
 
         // Remove from pending actions
         setPendingActions(pendingActions.filter((a) => a.id !== action.id));
-        
+
         // Clear response
         setActionResponses((prev) => {
           const updated = { ...prev };
@@ -322,15 +350,29 @@ const VendorOrderDetailsPage = () => {
     const proposedChanges = action.proposedChanges;
     if (!proposedChanges) return;
 
+    // Fetch the latest order data to avoid stale state issues
+    const latestOrderRes = await purchaseOrderService.getById(order.id);
+    if (!latestOrderRes.success) {
+      console.error("Failed to fetch latest order data");
+      return;
+    }
+    const latestOrder = latestOrderRes.data;
+
     // Update order with new delivery date
-    const orderUpdate = { ...order };
+    const orderUpdate = { ...latestOrder };
     if (proposedChanges.expectedDeliveryDate) {
       orderUpdate.expectedDeliveryDate = new Date(proposedChanges.expectedDeliveryDate).toISOString();
     }
-    
-    await purchaseOrderService.update(order.id, orderUpdate);
-    setOrder(orderUpdate);
-    setExpectedDeliveryDate(proposedChanges.expectedDeliveryDate || expectedDeliveryDate);
+
+    const updateRes = await purchaseOrderService.update(order.id, orderUpdate);
+    if (updateRes.success) {
+      setOrder(updateRes.data);
+      // Update the date input field with the new date
+      const newDate = proposedChanges.expectedDeliveryDate || expectedDeliveryDate;
+      setExpectedDeliveryDate(newDate);
+    } else {
+      console.error("Failed to update order:", updateRes.message);
+    }
 
     // Update order items with new quantities
     if (proposedChanges.itemChanges && proposedChanges.itemChanges.length > 0) {
@@ -414,7 +456,7 @@ const VendorOrderDetailsPage = () => {
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
-        
+
         <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-6 text-center">
           <h2 className="text-lg font-semibold text-yellow-800 dark:text-yellow-200 mb-2">
             Account Setup Incomplete
@@ -495,7 +537,7 @@ const VendorOrderDetailsPage = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Order Details Card */}
-        <OrderDetailsCard 
+        <OrderDetailsCard
           order={order}
           orderItems={orderItems}
           plants={plants}

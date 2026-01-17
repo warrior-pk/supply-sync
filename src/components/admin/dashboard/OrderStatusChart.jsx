@@ -69,6 +69,36 @@ const OrderStatusChart = () => {
     },
   };
 
+  const total = data.reduce((sum, item) => sum + item.value, 0);
+
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const value = payload[0].value;
+      const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+      return (
+        <div
+          style={{
+            backgroundColor: "hsl(var(--background))",
+            border: "1px solid hsl(var(--border))",
+            borderRadius: "6px",
+            padding: "8px 12px",
+          }}
+        >
+          <p style={{ margin: 0, fontSize: "14px", fontWeight: 500 }}>
+            {payload[0].name}
+          </p>
+          <p style={{ margin: "4px 0 0 0", fontSize: "14px" }}>
+            Count: {value}
+          </p>
+          <p style={{ margin: "2px 0 0 0", fontSize: "14px", color: "#3b82f6", fontWeight: 500 }}>
+            {percentage}%
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <Card className="border-0 shadow-lg">
       <CardHeader>
@@ -97,6 +127,7 @@ const OrderStatusChart = () => {
                   ))}
                 </Pie>
                 <Tooltip
+                  content={<CustomTooltip />}
                   contentStyle={{
                     backgroundColor: "hsl(var(--background))",
                     border: "1px solid hsl(var(--border))",

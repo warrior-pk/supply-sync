@@ -68,6 +68,13 @@
       "role": "VENDOR",
       "vendorId": "2734",
       "id": "5b05"
+    },
+    {
+      "email": "contact@tata.com",
+      "password": "contact@123",
+      "role": "VENDOR",
+      "vendorId": "b1a8",
+      "id": "573c"
     }
   ],
   "vendors": [
@@ -85,7 +92,8 @@
         "country": "India"
       },
       "status": "APPROVED",
-      "createdAt": "2026-01-01T09:00:00Z"
+      "createdAt": "2026-01-01T09:00:00Z",
+      "qualityRating": 4.6
     },
     {
       "id": "b4a8",
@@ -101,7 +109,8 @@
         "country": "India"
       },
       "status": "PENDING",
-      "createdAt": "2026-01-09T10:55:22Z"
+      "createdAt": "2026-01-09T10:55:22Z",
+      "qualityRating": 4.2
     },
     {
       "id": "06fa",
@@ -117,7 +126,8 @@
         "country": "India"
       },
       "status": "PENDING",
-      "createdAt": "2026-01-11T17:07:02Z"
+      "createdAt": "2026-01-11T17:07:02Z",
+      "qualityRating": 4.8
     },
     {
       "id": "d0cd",
@@ -133,7 +143,8 @@
         "country": "India"
       },
       "status": "PENDING",
-      "createdAt": "2026-01-11T17:20:45Z"
+      "createdAt": "2026-01-11T17:20:45Z",
+      "qualityRating": 4.5
     },
     {
       "id": "036b",
@@ -149,7 +160,8 @@
         "country": "India"
       },
       "status": "PENDING",
-      "createdAt": "2026-01-11T17:22:11Z"
+      "createdAt": "2026-01-11T17:22:11Z",
+      "qualityRating": 4.3
     },
     {
       "id": "5b04",
@@ -164,8 +176,11 @@
         "zipCode": "201301",
         "country": "India"
       },
-      "status": "PENDING",
-      "createdAt": "2026-01-11T17:24:08Z"
+      "status": "SUSPENDED",
+      "createdAt": "2026-01-11T17:24:08Z",
+      "statusReason": "You are not a valid vendor",
+      "statusUpdatedAt": "2026-01-13T09:41:37.605Z",
+      "qualityRating": 3.2
     },
     {
       "id": "c812",
@@ -181,7 +196,8 @@
         "country": "India"
       },
       "status": "PENDING",
-      "createdAt": "2026-01-11T17:26:10Z"
+      "createdAt": "2026-01-11T17:26:10Z",
+      "qualityRating": 4.7
     },
     {
       "id": "5b8e",
@@ -197,7 +213,8 @@
         "country": "India"
       },
       "status": "APPROVED",
-      "createdAt": "2026-01-11T17:29:22Z"
+      "createdAt": "2026-01-11T17:29:22Z",
+      "qualityRating": 4.9
     },
     {
       "id": "2734",
@@ -213,7 +230,27 @@
         "country": "India"
       },
       "status": "PENDING",
-      "createdAt": "2026-01-11T17:31:26Z"
+      "createdAt": "2026-01-11T17:31:26Z",
+      "qualityRating": 4.4
+    },
+    {
+      "id": "b1a8",
+      "userId": "573c",
+      "name": "Tata Steel",
+      "contactEmail": "contact@tata.com",
+      "contactPhone": "7654242098",
+      "address": {
+        "street": "Lane 2 ",
+        "city": "Pune",
+        "state": "Maharshtra",
+        "zipCode": "412208",
+        "country": "India"
+      },
+      "status": "APPROVED",
+      "createdAt": "2026-01-13T09:31:26Z",
+      "statusReason": null,
+      "statusUpdatedAt": "2026-01-13T09:41:13.680Z",
+      "qualityRating": 4.9
     }
   ],
   "vendorDocuments": [
@@ -251,6 +288,18 @@
       "fileType": "application/pdf",
       "verified": false,
       "uploadedAt": "2026-01-11T17:43:50Z",
+      "verifiedAt": null
+    },
+    {
+      "id": "586b",
+      "vendorId": "b1a8",
+      "documentName": "2464374_Prathmesh_Sunil_Bhujbal_Declaration-form",
+      "documentType": "ISO_9001",
+      "url": "https://morth.nic.in/sites/default/files/dd12-13_0.pdf",
+      "fileName": "2464374_Prathmesh_Sunil_Bhujbal_Declaration-form.pdf",
+      "fileType": "application/pdf",
+      "verified": false,
+      "uploadedAt": "2026-01-13T09:37:33Z",
       "verifiedAt": null
     }
   ],
@@ -377,7 +426,7 @@
       "plantId": "pl3m",
       "quantityAvailable": 500,
       "reorderLevel": 500,
-      "lastUpdated": "2026-01-12T16:37:10Z"
+      "lastUpdated": "2026-01-13T09:57:03Z"
     },
     {
       "id": "inv2",
@@ -399,9 +448,9 @@
       "id": "inv4",
       "productId": "p7k2",
       "plantId": "pl6p",
-      "quantityAvailable": 800,
+      "quantityAvailable": 950,
       "reorderLevel": 600,
-      "lastUpdated": "2026-01-07T12:00:00Z"
+      "lastUpdated": "2026-01-13T09:51:27Z"
     },
     {
       "id": "inv5",
@@ -418,6 +467,22 @@
       "quantityAvailable": 25,
       "reorderLevel": 5,
       "lastUpdated": "2026-01-12T16:33:40Z"
+    },
+    {
+      "id": "30e5",
+      "productId": "p9c4",
+      "plantId": "pl3m",
+      "quantityAvailable": 1000,
+      "reorderLevel": 200,
+      "lastUpdated": "2026-01-13T06:08:12Z"
+    },
+    {
+      "id": "a5eb",
+      "productId": "p9c4",
+      "plantId": "pl7q",
+      "quantityAvailable": 100,
+      "reorderLevel": 20,
+      "lastUpdated": "2026-01-13T06:15:03Z"
     }
   ],
   "purchaseOrders": [
@@ -472,6 +537,42 @@
       "status": "DELIVERED",
       "orderDate": "2026-01-12T16:36:24Z",
       "actualDeliveryDate": "2026-01-12T16:37:10Z"
+    },
+    {
+      "id": "52f4",
+      "vendorId": "5b8e",
+      "plantId": "pl3m",
+      "expectedDeliveryDate": "2026-01-22T00:00:00.000Z",
+      "status": "DELIVERED",
+      "orderDate": "2026-01-13T06:05:30Z",
+      "actualDeliveryDate": "2026-01-13T06:08:12Z"
+    },
+    {
+      "id": "7d8f",
+      "vendorId": "5b8e",
+      "plantId": "pl7q",
+      "expectedDeliveryDate": "2026-01-21T00:00:00.000Z",
+      "status": "DELIVERED",
+      "orderDate": "2026-01-13T06:14:41Z",
+      "actualDeliveryDate": "2026-01-13T06:15:03Z"
+    },
+    {
+      "id": "837b",
+      "vendorId": "f2a4",
+      "plantId": "pl6p",
+      "expectedDeliveryDate": "2026-01-20T00:00:00.000Z",
+      "status": "DELIVERED",
+      "orderDate": "2026-01-13T09:46:21Z",
+      "actualDeliveryDate": "2026-01-13T09:51:27Z"
+    },
+    {
+      "id": "6c09",
+      "vendorId": "f2a4",
+      "plantId": "pl3m",
+      "expectedDeliveryDate": "2026-01-20T00:00:00.000Z",
+      "status": "DELIVERED",
+      "orderDate": "2026-01-13T09:55:49Z",
+      "actualDeliveryDate": "2026-01-13T09:57:03Z"
     }
   ],
   "purchaseOrderItems": [
@@ -517,15 +618,126 @@
       "quantity": 200,
       "unit": "KG",
       "purchaseOrderId": "aed3"
+    },
+    {
+      "id": "769c",
+      "productId": "p9c4",
+      "quantity": 1000,
+      "unit": "PIECE",
+      "purchaseOrderId": "52f4"
+    },
+    {
+      "id": "a488",
+      "productId": "p9c4",
+      "quantity": 100,
+      "unit": "PIECE",
+      "purchaseOrderId": "7d8f"
+    },
+    {
+      "id": "6738",
+      "productId": "p7k2",
+      "quantity": 150,
+      "unit": "TONNE",
+      "purchaseOrderId": "837b"
+    },
+    {
+      "id": "d5b6",
+      "productId": "p7k2",
+      "quantity": 100,
+      "unit": "KG",
+      "purchaseOrderId": "6c09"
     }
   ],
   "performanceMetrics": [
     {
       "id": "pm2v",
       "vendorId": "f2a4",
-      "onTimeDeliveryRate": 100,
+      "onTimeDeliveryRate": 92,
       "qualityScore": 4.6,
-      "evaluationDate": "2026-01-07T10:00:00Z"
+      "evaluationDate": "2026-01-07T10:00:00Z",
+      "overallRating": 4.6,
+      "lastUpdated": "2026-01-13T09:57:03Z"
+    },
+    {
+      "id": "pm3w",
+      "vendorId": "b4a8",
+      "onTimeDeliveryRate": 88,
+      "qualityScore": 4.2,
+      "evaluationDate": "2026-01-07T10:00:00Z",
+      "overallRating": 4.2,
+      "lastUpdated": "2026-01-13T09:57:03Z"
+    },
+    {
+      "id": "pm4x",
+      "vendorId": "06fa",
+      "onTimeDeliveryRate": 95,
+      "qualityScore": 4.8,
+      "evaluationDate": "2026-01-07T10:00:00Z",
+      "overallRating": 4.8,
+      "lastUpdated": "2026-01-13T09:57:03Z"
+    },
+    {
+      "id": "pm5y",
+      "vendorId": "d0cd",
+      "onTimeDeliveryRate": 90,
+      "qualityScore": 4.5,
+      "evaluationDate": "2026-01-07T10:00:00Z",
+      "overallRating": 4.5,
+      "lastUpdated": "2026-01-13T09:57:03Z"
+    },
+    {
+      "id": "pm6z",
+      "vendorId": "036b",
+      "onTimeDeliveryRate": 85,
+      "qualityScore": 4.3,
+      "evaluationDate": "2026-01-07T10:00:00Z",
+      "overallRating": 4.3,
+      "lastUpdated": "2026-01-13T09:57:03Z"
+    },
+    {
+      "id": "pm7a",
+      "vendorId": "5b04",
+      "onTimeDeliveryRate": 70,
+      "qualityScore": 3.2,
+      "evaluationDate": "2026-01-07T10:00:00Z",
+      "overallRating": 3.2,
+      "lastUpdated": "2026-01-13T09:57:03Z"
+    },
+    {
+      "id": "pm8b",
+      "vendorId": "c812",
+      "onTimeDeliveryRate": 93,
+      "qualityScore": 4.7,
+      "evaluationDate": "2026-01-07T10:00:00Z",
+      "overallRating": 4.7,
+      "lastUpdated": "2026-01-13T09:57:03Z"
+    },
+    {
+      "id": "pm9c",
+      "vendorId": "5b8e",
+      "onTimeDeliveryRate": 97,
+      "qualityScore": 4.9,
+      "evaluationDate": "2026-01-07T10:00:00Z",
+      "overallRating": 4.9,
+      "lastUpdated": "2026-01-13T09:57:03Z"
+    },
+    {
+      "id": "pm10d",
+      "vendorId": "2734",
+      "onTimeDeliveryRate": 87,
+      "qualityScore": 4.4,
+      "evaluationDate": "2026-01-07T10:00:00Z",
+      "overallRating": 4.4,
+      "lastUpdated": "2026-01-13T09:57:03Z"
+    },
+    {
+      "id": "pm11e",
+      "vendorId": "b1a8",
+      "onTimeDeliveryRate": 96,
+      "qualityScore": 4.9,
+      "evaluationDate": "2026-01-07T10:00:00Z",
+      "overallRating": 4.9,
+      "lastUpdated": "2026-01-13T09:57:03Z"
     }
   ],
   "orderActions": [
@@ -601,6 +813,31 @@
       "resolvedAt": "2026-01-12T18:33:22Z",
       "resolvedBy": "f2a4",
       "vendorResponse": "Okay"
+    },
+    {
+      "id": "b9c3",
+      "purchaseOrderId": "837b",
+      "vendorId": "f2a4",
+      "actionType": "UPDATE",
+      "message": "need more materials",
+      "proposedChanges": {
+        "expectedDeliveryDate": "2026-01-22",
+        "itemChanges": [
+          {
+            "id": "6738",
+            "productId": "p7k2",
+            "productName": "Steel Rod Grade A",
+            "originalQuantity": 120,
+            "newQuantity": 150,
+            "unit": "TONNE"
+          }
+        ]
+      },
+      "status": "APPROVED",
+      "createdAt": "2026-01-13T09:47:54Z",
+      "resolvedAt": "2026-01-13T09:49:34Z",
+      "resolvedBy": "f2a4",
+      "vendorResponse": "request approved"
     }
   ]
 }

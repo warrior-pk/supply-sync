@@ -15,19 +15,20 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
   ResponsiveContainer,
 } from "recharts";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const VendorPerformanceChart = () => {
+const VendorMetricsChart = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchPerformanceData();
+    fetchMetricsData();
   }, []);
 
-  const fetchPerformanceData = async () => {
+  const fetchMetricsData = async () => {
     try {
       setLoading(true);
       const [metricsRes, vendorsRes] = await Promise.all([
@@ -44,24 +45,53 @@ const VendorPerformanceChart = () => {
         const chartData = (metricsRes.data || []).map((metric) => ({
           name: vendorMap[metric.vendorId] || `Vendor ${metric.vendorId}`,
           performance: metric.onTimeDeliveryRate || 0,
+          quality: metric.qualityScore || 0,
         }));
 
         chartData.sort((a, b) => b.performance - a.performance);
         setData(chartData);
       }
     } catch (error) {
-      console.error("Error fetching performance data:", error);
+      console.error("Error fetching metrics data:", error);
     } finally {
       setLoading(false);
     }
   };
 
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div
+          style={{
+            backgroundColor: "hsl(var(--background))",
+            border: "1px solid hsl(var(--border))",
+            borderRadius: "6px",
+            padding: "8px 12px",
+          }}
+        >
+          <p style={{ color: "hsl(var(--foreground))", margin: "0 0 4px 0" }}>
+            {payload[0].payload.name}
+          </p>
+          {payload.map((entry, index) => (
+            <p key={index} style={{ color: entry.color, margin: "2px 0" }}>
+              {entry.name}:{" "}
+              {entry.name === "Quality"
+                ? `${entry.value.toFixed(1)} stars`
+                : `${entry.value}%`}
+            </p>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <Card className="border-0 shadow-lg">
       <CardHeader>
-        <CardTitle>On-Time Delivery Performance</CardTitle>
+        <CardTitle>Vendor Performance Metrics</CardTitle>
         <CardDescription>
-          Percentage of orders delivered on time by vendor
+          On-time delivery (%) and quality score (0-5 stars) by vendor
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -86,6 +116,7 @@ const VendorPerformanceChart = () => {
                   tick={{ fontSize: 12 }}
                 />
                 <YAxis
+                  yAxisId="left"
                   domain={[0, 100]}
                   label={{
                     value: "Performance (%)",
@@ -94,26 +125,46 @@ const VendorPerformanceChart = () => {
                     offset: 10,
                   }}
                 />
-                <Tooltip
-                  contentStyle={{
-                    backgroundColor: "hsl(var(--background))",
-                    border: "1px solid hsl(var(--border))",
-                    borderRadius: "6px",
+                <YAxis
+                  yAxisId="right"
+                  orientation="right"
+                  domain={[0, 5]}
+                  label={{
+                    value: "Quality Score",
+                    angle: 90,
+                    position: "insideRight",
+                    offset: 10,
                   }}
-                  formatter={(value) => `${value}%`}
-                  labelStyle={{ color: "hsl(var(--foreground))" }}
+                />
+                <Tooltip content={<CustomTooltip />} />
+                <Legend
+                  wrapperStyle={{ paddingTop: "20px" }}
+                  formatter={(value) =>
+                    value === "performance"
+                      ? "On-Time Delivery (%)"
+                      : "Quality Score"
+                  }
                 />
                 <Bar
+                  yAxisId="left"
                   dataKey="performance"
                   fill="#10b981"
                   radius={[8, 8, 0, 0]}
+                  name="performance"
+                />
+                <Bar
+                  yAxisId="right"
+                  dataKey="quality"
+                  fill="#3b82f6"
+                  radius={[8, 8, 0, 0]}
+                  name="quality"
                 />
               </BarChart>
             </ResponsiveContainer>
           </div>
         ) : (
           <div className="h-96 flex items-center justify-center text-muted-foreground">
-            No performance data available
+            No metrics data available
           </div>
         )}
       </CardContent>
@@ -121,4 +172,4 @@ const VendorPerformanceChart = () => {
   );
 };
 
-export default VendorPerformanceChart;
+export default VendorMetricsChart;

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import vendorService from "@/services/vendor.service";
 import vendorDocumentService from "@/services/vendor-document.service";
+import performanceMetricsService from "@/services/performance-metrics.service";
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -153,6 +154,25 @@ const VendorDetailsPage = () => {
       }
 
       const updateResponse = await vendorService.update(vendorId, updateData);
+
+      // Create performance metrics if approving and metrics don't exist
+      if (newStatus === VENDOR_STATUS.APPROVED) {
+        const metricsRes = await performanceMetricsService.getByVendorId(vendorId);
+        if (!metricsRes.success || !metricsRes.data || metricsRes.data.length === 0) {
+          const metricsPayload = {
+            vendorId,
+            onTimeDeliveryRate: 0,
+            qualityScore: 0,
+            evaluationDate: new Date().toISOString(),
+            overallRating: 0,
+            lastUpdated: new Date().toISOString(),
+          };
+          const createMetricsRes = await performanceMetricsService.create(metricsPayload);
+          if (!createMetricsRes.success) {
+            console.warn("Failed to create performance metrics:", createMetricsRes.message);
+          }
+        }
+      }
 
       if (updateResponse.success) {
         setVendor(updateData);
